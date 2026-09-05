@@ -698,10 +698,7 @@ function convertDate(text) {
         return match;
     });
     
-    // Only log if there were matches
-    if (matches.length > 0) {
-        console.log('📅 [Date] Matches:', matches);
-    }
+
     
     return text;
 }
@@ -912,7 +909,7 @@ function removeSpecialChars(text) {
     // Replace common symbols with words
     text = text.replace(/&/g, ' và ');
     text = text.replace(/@/g, ' a còng ');
-    text = text.replace(/#/g, ' thăng ');
+    text = text.replace(/#/g, ' ');
     text = text.replace(/\*/g, '');
     text = text.replace(/_/g, ' ');
     text = text.replace(/~/g, '');
@@ -1025,13 +1022,7 @@ export function processVietnameseText(text, config = null) {
     // Step 16: Clean whitespace
     text = cleanWhitespace(text);
     
-    // Only log if text actually changed
-    if (text !== originalText) {
-        console.log('📝 [Vietnamese Processor]', {
-            input: originalText,
-            output: text
-        });
-    }
+
     
     return text;
 }

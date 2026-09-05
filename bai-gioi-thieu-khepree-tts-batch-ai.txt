@@ -1,0 +1,75 @@
+﻿================================================================================
+Khepree TTS Batch AI
+Phần mềm chuyển văn bản thành giọng nói hàng loạt — MIỄN PHÍ · KHÔNG GIỚI HẠN KÝ TỰ
+================================================================================
+
+Meta title: Khepree TTS Batch AI — Miễn phí, không giới hạn ký tự, TTS hàng loạt
+Meta description: Tạo giọng đọc tiếng Việt miễn phí, không giới hạn độ dài văn bản. Import Excel/TXT, xuất WAV/MP3 hàng loạt. Cài là dùng.
+Từ khóa: text to speech miễn phí, TTS tiếng Việt không giới hạn, chuyển văn bản thành giọng nói, TTS batch, VieNeu, Edge TTS
+
+Phiên bản: 2.0
+Hệ điều hành: Windows · macOS
+
+
+--------------------------------------------------------------------------------
+GIỚI THIỆU NGẮN
+--------------------------------------------------------------------------------
+
+Khepree TTS Batch AI là phần mềm desktop giúp bạn chuyển văn bản thành giọng nói
+hàng loạt — hoàn toàn MIỄN PHÍ, KHÔNG GIỚI HẠN SỐ KÝ TỰ trên mỗi đoạn văn.
+
+Không như các dịch vụ TTS online trả phí hay giới hạn 2.000–5.000 ký tự mỗi lần,
+Khepree TTS Batch AI cho phép bạn xử lý chương truyện dài, kịch bản video, bài
+giảng, sách nói… với độ dài tùy ý — miễn phí, không cần đăng ký tài khoản,
+không tốn phí theo ký tự.
+
+
+--------------------------------------------------------------------------------
+ĐIỂM NỔI BẬT — MIỄN PHÍ · KHÔNG GIỚI HẠN
+--------------------------------------------------------------------------------
+
+  ✓ 100% MIỄN PHÍ — không phí đăng ký, không phí theo ký tự, không phí ẩn
+  ✓ KHÔNG GIỚI HẠN KÝ TỰ — paste hoặc import văn bản dài bao nhiêu cũng được
+  ✓ KHÔNG GIỚI HẠN SỐ FILE — chạy batch hàng trăm, hàng nghìn tác vụ một lần
+  ✓ HAI ENGINE MIỄN PHÍ — VieNeu offline + Edge TTS online, chọn theo nhu cầu
+  ✓ CÀI LÀ DÙNG — gói sẵn model AI, Python, ffmpeg; không cần cấu hình kỹ thuật
+
+
+--------------------------------------------------------------------------------
+SO SÁNH NHANH
+--------------------------------------------------------------------------------
+
+  Tiêu chí              | Dịch vụ TTS online    | Khepree TTS Batch AI
+  ----------------------|-----------------------|----------------------
+  Chi phí               | Trả theo ký tự / gói  | Miễn phí
+  Giới hạn ký tự        | Thường 2k–5k / lần    | Không giới hạn
+  Batch hàng loạt       | Hạn chế / trả thêm    | Có sẵn
+  Offline               | Không                 | Có (VieNeu)
+  Cài đặt               | Web                   | Desktop Windows/macOS
+
+
+--------------------------------------------------------------------------------
+CÁCH DÙNG NHANH
+--------------------------------------------------------------------------------
+
+  1. Cài đặt Khepree TTS Batch AI (Windows hoặc macOS)
+  2. Import TXT / Excel / thư mục chương
+  3. Chọn engine VieNeu (offline) hoặc Edge TTS (online)
+  4. Chạy batch → xuất WAV/MP3
+
+
+--------------------------------------------------------------------------------
+FAQ
+--------------------------------------------------------------------------------
+
+  H: Khepree TTS Batch AI có thật sự miễn phí không?
+  Đ: Có. Không phí theo ký tự, không bắt buộc đăng ký để dùng TTS batch.
+
+
+--------------------------------------------------------------------------------
+KẾT
+--------------------------------------------------------------------------------
+
+Khepree TTS Batch AI — MIỄN PHÍ · KHÔNG GIỚI HẠN KÝ TỰ · BATCH HÀNG LOẠT
+
+© Khepree · Phiên bản 2.0 · Bản quyền cá nhân

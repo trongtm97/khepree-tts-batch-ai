@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khepree TTS Batch AI</title>
+    <link rel="icon" href="/khepree-logo.png" type="image/png">
+    <link rel="stylesheet" href="/src/batch/voxbatch.css">
+</head>
+<body>
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+      <symbol id="ico-batch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+      <symbol id="ico-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></symbol>
+      <symbol id="ico-chip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
+      <symbol id="ico-sliders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3"/><circle cx="4" cy="14" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="20" cy="16" r="2"/></symbol>
+      <symbol id="ico-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></symbol>
+      <symbol id="ico-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3Z"/><path d="M5 19h14"/></symbol>
+      <symbol id="ico-reels" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9v6l5-3-5-3Z"/></symbol>
+      <symbol id="ico-story" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M8 7h8M8 11h6"/></symbol>
+      <symbol id="ico-audio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+      <symbol id="ico-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+      <symbol id="ico-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+      <symbol id="ico-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></symbol>
+      <symbol id="ico-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></symbol>
+      <symbol id="ico-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></symbol>
+      <symbol id="ico-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+      <symbol id="ico-facebook" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></symbol>
+      <symbol id="ico-youtube" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></symbol>
+      <symbol id="ico-tiktok" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></symbol>
+      <symbol id="ico-telegram" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></symbol>
+      <symbol id="ico-zalo" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 5.82 2 10.5c0 2.58 1.36 4.88 3.48 6.36L4.5 21.5l4.9-2.7c.82.23 1.69.35 2.6.35 5.523 0 10-3.82 10-8.5S17.523 2 12 2zm-2.2 11.2H7.4V8.4h2.4v4.8zm3.6 0h-2.4V8.4h2.4v4.8zm3.6 0h-2.4V8.4h2.4v4.8z"/></symbol>
+      <symbol id="ico-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></symbol>
+    </svg>
+    <div id="app">
+        <aside class="vb-sidebar">
+            <button type="button" class="vb-brand" data-goto="khepree" title="Khepree — bản quyền" aria-label="Khepree TTS Batch AI">
+                <img src="/khepree-logo.png" alt="" class="vb-brand-logo" aria-hidden="true">
+                <div class="vb-brand-text">
+                    <div class="vb-brand-name">
+                        <span class="vb-brand-name-line">Khepree</span>
+                        <span class="vb-brand-name-line">TTS Batch AI</span>
+                    </div>
+                </div>
+            </button>
+            <nav class="vb-nav">
+                <div class="vb-nav-group">Batch</div>
+                <button type="button" class="vb-nav-item active" data-tab="batch">
+                    <span class="vb-nav-icon"><svg class="vb-ico"><use href="#ico-batch"/></svg></span><span class="vb-nav-label">VieNeu Turbo</span>
+                </button>
+                <button type="button" class="vb-nav-item" data-tab="nano">
+                    <span class="vb-nav-icon"><svg class="vb-ico"><use href="#ico-zap"/></svg></span><span class="vb-nav-label">VieNeu Nano</span>
+                </button>
+                <button type="button" class="vb-nav-item" data-tab="edge">
+                    <span class="vb-nav-icon"><svg class="vb-ico"><use href="#ico-cloud"/></svg></span><span class="vb-nav-label">Edge TTS</span>
+                </button>
+                <div class="vb-nav-divider" role="separator"></div>
+                <button type="button" class="vb-nav-item" data-tab="khepree">
+                    <span class="vb-nav-icon"><svg class="vb-ico"><use href="#ico-brand"/></svg></span><span class="vb-nav-label">Khepree</span>
+                </button>
+                <button type="button" class="vb-nav-item" data-tab="help">
+                    <span class="vb-nav-icon"><svg class="vb-ico"><use href="#ico-book"/></svg></span><span class="vb-nav-label">Hướng dẫn</span>
+                </button>
+                <button type="button" class="vb-nav-item" data-tab="settings">
+                    <span class="vb-nav-icon"><svg class="vb-ico"><use href="#ico-sliders"/></svg></span><span class="vb-nav-label">Cài đặt</span>
+                </button>
+            </nav>
+            <div class="vb-sidebar-footer">
+                <div class="vb-sidebar-contacts" role="group" aria-label="Liên hệ Khepree Labs">
+                    <span class="vb-sidebar-contacts-label">Khepree Labs</span>
+                    <button type="button" class="vb-contact-icon vb-source-link" data-url="https://www.facebook.com/KhepreeLabs" title="Mở Facebook Khepree Labs" aria-label="Mở Facebook Khepree Labs"><svg class="vb-ico"><use href="#ico-facebook"/></svg></button>
+                    <button type="button" class="vb-contact-icon vb-source-link" data-url="https://www.youtube.com/@KhepreeLabs" title="Mở YouTube Khepree Labs" aria-label="Mở YouTube Khepree Labs"><svg class="vb-ico"><use href="#ico-youtube"/></svg></button>
+                    <button type="button" class="vb-contact-icon vb-source-link" data-url="https://www.tiktok.com/@khepreelabs" title="Mở TikTok Khepree Labs" aria-label="Mở TikTok Khepree Labs"><svg class="vb-ico"><use href="#ico-tiktok"/></svg></button>
+                    <button type="button" class="vb-contact-icon vb-source-link" data-url="https://t.me/KhepreeLabs" title="Mở Telegram Khepree Labs" aria-label="Mở Telegram Khepree Labs"><svg class="vb-ico"><use href="#ico-telegram"/></svg></button>
+                    <button type="button" class="vb-contact-icon vb-source-link" data-url="https://zalo.me/0867268149" title="Liên hệ Khepree Labs qua Zalo" aria-label="Liên hệ Khepree Labs qua Zalo"><svg class="vb-ico"><use href="#ico-zalo"/></svg></button>
+                </div>
+                <p class="vb-sidebar-credits">Mã nguồn &amp; cảm ơn:</p>
+                <p class="vb-sidebar-links">
+                    <a href="#" class="vb-link vb-source-link" data-url="https://github.com/pnnbao97/VieNeu-TTS">VieNeu-TTS</a>
+                    ·
+                    <a href="#" class="vb-link vb-source-link" data-url="https://github.com/rany2/edge-tts">edge-tts</a>
+                </p>
+                <p class="vb-sidebar-meta">Bản quyền qua Khepree<br>Phiên bản 2.0 · Khepree</p>
+            </div>
+        </aside>
+
+        <main class="vb-main">
+            <section id="tab-batch" class="vb-page active">
+                <div class="vb-batch" id="batch-workspace">
+                    <header class="vb-sticky-header">
+                        <div class="vb-header-row">
+                            <div>
+                                <h1 class="vb-page-title">VieNeu Turbo Batch</h1>
+                                <p class="vb-page-sub">48 kHz · Offline · CPU mạnh</p>
+                            </div>
+                            <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-download-template-inline" title="Tải file Excel mẫu (có hướng dẫn chi tiết)">Tải mẫu Excel</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-export-jobs">Xuất JSON</button>
+                                <span class="vb-status-chip engine-status-badge">Đang khởi tạo</span>
+                            </div>
+                        </div>
+                        <div class="vb-config-panel">
+                            <div class="vb-field">
+                                <label>Giọng đọc</label>
+                                <select class="sel-voice"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Tốc độ</label>
+                                <input type="range" class="inp-speed-range" min="0.5" max="2" step="0.05" value="1">
+                                <div class="vb-range-val speed-val">1.00×</div>
+                            </div>
+                            <div class="vb-field">
+                                <label>Âm lượng</label>
+                                <input type="range" class="inp-volume-range" min="50" max="150" step="5" value="100">
+                                <div class="vb-range-val volume-val">100%</div>
+                            </div>
+                            <div class="vb-field">
+                                <label>Ngắt nhịp</label>
+                                <input type="range" class="inp-pause-range" min="50" max="200" step="5" value="100">
+                                <div class="vb-range-val pause-val">100%</div>
+                            </div>
+                            <div class="vb-field vb-field-hint" style="flex:1;min-width:180px">
+                                <label>Cảm xúc (v3)</label>
+                                <span class="vb-hint">Tag trong text: [cười], [thở dài], [hắng giọng]</span>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="vb-table-toolbar">
+                        <div class="vb-stats-inline">
+                            <span>Tổng <strong class="stat-total">0</strong></span>
+                            <span class="c-wait">Chờ <strong class="stat-waiting">0</strong></span>
+                            <span class="c-done">Xong <strong class="stat-done">0</strong></span>
+                            <span class="c-fail">Lỗi <strong class="stat-error">0</strong></span>
+                        </div>
+                        <div class="vb-search"><input type="search" class="inp-search" placeholder="Tìm tác vụ…"></div>
+                        <div class="vb-filter">
+                            <select class="sel-filter-status">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="pending">Chờ</option>
+                                <option value="running">Đang chạy</option>
+                                <option value="done">Hoàn thành</option>
+                                <option value="error">Lỗi</option>
+                            </select>
+                        </div>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-add-row">+ Thêm dòng</button>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-delete-selected">Xóa đã chọn</button>
+                        <button type="button" class="vb-btn vb-btn-danger vb-btn-sm btn-clear-all" title="Xóa toàn bộ tác vụ trong bảng">Xóa tất cả</button>
+                        <span class="page-info vb-task-count"></span>
+                    </div>
+
+                    <div class="vb-workspace-body">
+                    <div class="vb-grid-wrap grid-drop-zone">
+                        <table class="vb-grid">
+                            <thead>
+                                <tr>
+                                    <th class="col-cb"><input type="checkbox" class="check-all" title="Chọn tất cả"></th>
+                                    <th class="col-stt sortable" data-sort="order">STT</th>
+                                    <th class="col-grp sortable" data-sort="group">Nhóm</th>
+                                    <th class="col-file sortable" data-sort="name">Tên file</th>
+                                    <th class="col-text">Nội dung văn bản</th>
+                                    <th class="col-st sortable" data-sort="status">Trạng thái</th>
+                                    <th class="col-prog">Tiến độ</th>
+                                    <th class="col-out">Kết quả</th>
+                                    <th class="col-act">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="grid-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="vb-console log-panel">
+                        <div class="vb-console-header btn-toggle-log">
+                            <span>Console</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-clear-log" style="margin-left:auto">Xóa</button>
+                        </div>
+                        <div class="vb-console-body log-body"></div>
+                    </div>
+                    </div>
+
+                    <footer class="vb-footer">
+                        <div class="vb-footer-meta">
+                            <span class="output-dir-label tab-output-dir-label" title="Thư mục xuất">Tải xuống</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-tab-outputDir">Đổi thư mục</button>
+                        </div>
+                        <div class="vb-footer-actions">
+                            <button type="button" class="vb-btn vb-btn-primary vb-btn-lg btn-run">Bắt đầu batch</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-pause" disabled>Tạm dừng</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-resume" disabled>Tiếp tục</button>
+                            <button type="button" class="vb-btn vb-btn-danger btn-stop" style="display:none">Dừng</button>
+                            <button type="button" class="vb-btn vb-btn-ghost btn-run-errors">Chạy lại lỗi</button>
+                        </div>
+                    </footer>
+                </div>
+            </section>
+
+            <section id="tab-nano" class="vb-page">
+                <div class="vb-batch" id="nano-workspace">
+                    <header class="vb-sticky-header">
+                        <div class="vb-header-row">
+                            <div>
+                                <h1 class="vb-page-title">VieNeu Nano Batch</h1>
+                                <p class="vb-page-sub">24 kHz · Offline · máy yếu</p>
+                            </div>
+                            <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-download-template-inline" title="Tải file Excel mẫu (có hướng dẫn chi tiết)">Tải mẫu Excel</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-export-jobs">Xuất JSON</button>
+                                <span class="vb-status-chip engine-status-badge">Đang khởi tạo</span>
+                            </div>
+                        </div>
+                        <div class="vb-config-panel">
+                            <div class="vb-field">
+                                <label>Giọng đọc</label>
+                                <select class="sel-voice"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Tốc độ</label>
+                                <input type="range" class="inp-speed-range" min="0.5" max="2" step="0.05" value="1">
+                                <div class="vb-range-val speed-val">1.00×</div>
+                            </div>
+                            <div class="vb-field">
+                                <label>Âm lượng</label>
+                                <input type="range" class="inp-volume-range" min="50" max="150" step="5" value="100">
+                                <div class="vb-range-val volume-val">100%</div>
+                            </div>
+                            <div class="vb-field">
+                                <label>Ngắt nhịp</label>
+                                <input type="range" class="inp-pause-range" min="50" max="200" step="5" value="100">
+                                <div class="vb-range-val pause-val">100%</div>
+                            </div>
+                            <div class="vb-field vb-field-hint" style="flex:1;min-width:180px">
+                                <label>Cảm xúc (v3)</label>
+                                <span class="vb-hint">Tag trong text: [cười], [thở dài], [hắng giọng]</span>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="vb-table-toolbar">
+                        <div class="vb-stats-inline">
+                            <span>Tổng <strong class="stat-total">0</strong></span>
+                            <span class="c-wait">Chờ <strong class="stat-waiting">0</strong></span>
+                            <span class="c-done">Xong <strong class="stat-done">0</strong></span>
+                            <span class="c-fail">Lỗi <strong class="stat-error">0</strong></span>
+                        </div>
+                        <div class="vb-search"><input type="search" class="inp-search" placeholder="Tìm tác vụ…"></div>
+                        <div class="vb-filter">
+                            <select class="sel-filter-status">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="pending">Chờ</option>
+                                <option value="running">Đang chạy</option>
+                                <option value="done">Hoàn thành</option>
+                                <option value="error">Lỗi</option>
+                            </select>
+                        </div>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-add-row">+ Thêm dòng</button>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-delete-selected">Xóa đã chọn</button>
+                        <button type="button" class="vb-btn vb-btn-danger vb-btn-sm btn-clear-all" title="Xóa toàn bộ tác vụ trong bảng">Xóa tất cả</button>
+                        <span class="page-info vb-task-count"></span>
+                    </div>
+
+                    <div class="vb-workspace-body">
+                    <div class="vb-grid-wrap grid-drop-zone">
+                        <table class="vb-grid">
+                            <thead>
+                                <tr>
+                                    <th class="col-cb"><input type="checkbox" class="check-all" title="Chọn tất cả"></th>
+                                    <th class="col-stt sortable" data-sort="order">STT</th>
+                                    <th class="col-grp sortable" data-sort="group">Nhóm</th>
+                                    <th class="col-file sortable" data-sort="name">Tên file</th>
+                                    <th class="col-text">Nội dung văn bản</th>
+                                    <th class="col-st sortable" data-sort="status">Trạng thái</th>
+                                    <th class="col-prog">Tiến độ</th>
+                                    <th class="col-out">Kết quả</th>
+                                    <th class="col-act">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="grid-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="vb-console log-panel">
+                        <div class="vb-console-header btn-toggle-log">
+                            <span>Console</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-clear-log" style="margin-left:auto">Xóa</button>
+                        </div>
+                        <div class="vb-console-body log-body"></div>
+                    </div>
+                    </div>
+
+                    <footer class="vb-footer">
+                        <div class="vb-footer-meta">
+                            <span class="output-dir-label tab-output-dir-label" title="Thư mục xuất">Tải xuống</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-tab-outputDir">Đổi thư mục</button>
+                        </div>
+                        <div class="vb-footer-actions">
+                            <button type="button" class="vb-btn vb-btn-primary vb-btn-lg btn-run">Bắt đầu batch</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-pause" disabled>Tạm dừng</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-resume" disabled>Tiếp tục</button>
+                            <button type="button" class="vb-btn vb-btn-danger btn-stop" style="display:none">Dừng</button>
+                            <button type="button" class="vb-btn vb-btn-ghost btn-run-errors">Chạy lại lỗi</button>
+                        </div>
+                    </footer>
+                </div>
+            </section>
+
+            <section id="tab-edge" class="vb-page">
+                <div class="vb-batch" id="edge-workspace">
+                    <header class="vb-sticky-header">
+                        <div class="vb-header-row">
+                            <div>
+                                <h1 class="vb-page-title">Edge TTS Batch</h1>
+                                <p class="vb-page-sub">Online · cần mạng · sea-g2p cho tiếng Việt</p>
+                            </div>
+                            <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-download-template-inline" title="Tải file Excel mẫu (có hướng dẫn chi tiết)">Tải mẫu Excel</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-export-jobs">Xuất JSON</button>
+                                <span class="vb-status-chip engine-status-badge">Đang khởi tạo</span>
+                            </div>
+                        </div>
+                        <div class="vb-config-panel">
+                            <div class="vb-field">
+                                <label>Loại giọng</label>
+                                <select class="sel-voice-mode">
+                                    <option value="multilingual">Đa ngôn ngữ (Multilingual)</option>
+                                    <option value="vietnamese">Tiếng Việt chuyên (HoaiMy · NamMinh)</option>
+                                </select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Giọng đọc</label>
+                                <select class="sel-voice"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Tốc độ</label>
+                                <input type="range" class="inp-edge-rate" min="-50" max="100" step="5" value="0">
+                                <div class="vb-range-val edge-rate-val">+0%</div>
+                            </div>
+                            <div class="vb-field">
+                                <label>Cao độ</label>
+                                <input type="range" class="inp-edge-pitch" min="-50" max="50" step="5" value="0">
+                                <div class="vb-range-val edge-pitch-val">+0Hz</div>
+                            </div>
+                            <div class="vb-field">
+                                <label>Âm lượng</label>
+                                <input type="range" class="inp-edge-volume" min="-50" max="50" step="5" value="0">
+                                <div class="vb-range-val edge-volume-val">+0%</div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="vb-table-toolbar">
+                        <div class="vb-stats-inline">
+                            <span>Tổng <strong class="stat-total">0</strong></span>
+                            <span class="c-wait">Chờ <strong class="stat-waiting">0</strong></span>
+                            <span class="c-done">Xong <strong class="stat-done">0</strong></span>
+                            <span class="c-fail">Lỗi <strong class="stat-error">0</strong></span>
+                        </div>
+                        <div class="vb-search"><input type="search" class="inp-search" placeholder="Tìm tác vụ…"></div>
+                        <div class="vb-filter">
+                            <select class="sel-filter-status">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="pending">Chờ</option>
+                                <option value="running">Đang chạy</option>
+                                <option value="done">Hoàn thành</option>
+                                <option value="error">Lỗi</option>
+                            </select>
+                        </div>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-add-row">+ Thêm dòng</button>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-delete-selected">Xóa đã chọn</button>
+                        <button type="button" class="vb-btn vb-btn-danger vb-btn-sm btn-clear-all" title="Xóa toàn bộ tác vụ trong bảng">Xóa tất cả</button>
+                        <span class="page-info vb-task-count"></span>
+                    </div>
+
+                    <div class="vb-workspace-body">
+                    <div class="vb-grid-wrap grid-drop-zone">
+                        <table class="vb-grid">
+                            <thead>
+                                <tr>
+                                    <th class="col-cb"><input type="checkbox" class="check-all" title="Chọn tất cả"></th>
+                                    <th class="col-stt sortable" data-sort="order">STT</th>
+                                    <th class="col-grp sortable" data-sort="group">Nhóm</th>
+                                    <th class="col-file sortable" data-sort="name">Tên file</th>
+                                    <th class="col-text">Nội dung văn bản</th>
+                                    <th class="col-st sortable" data-sort="status">Trạng thái</th>
+                                    <th class="col-prog">Tiến độ</th>
+                                    <th class="col-out">Kết quả</th>
+                                    <th class="col-act">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="grid-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="vb-console log-panel">
+                        <div class="vb-console-header btn-toggle-log">
+                            <span>Console</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-clear-log" style="margin-left:auto">Xóa</button>
+                        </div>
+                        <div class="vb-console-body log-body"></div>
+                    </div>
+                    </div>
+
+                    <footer class="vb-footer">
+                        <div class="vb-footer-meta">
+                            <span class="output-dir-label tab-output-dir-label" title="Thư mục xuất">Tải xuống</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-tab-outputDir">Đổi thư mục</button>
+                        </div>
+                        <div class="vb-footer-actions">
+                            <button type="button" class="vb-btn vb-btn-primary vb-btn-lg btn-run">Bắt đầu batch</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-pause" disabled>Tạm dừng</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-resume" disabled>Tiếp tục</button>
+                            <button type="button" class="vb-btn vb-btn-danger btn-stop" style="display:none">Dừng</button>
+                            <button type="button" class="vb-btn vb-btn-ghost btn-run-errors">Chạy lại lỗi</button>
+                        </div>
+                    </footer>
+                </div>
+            </section>
+
+            <section id="tab-settings" class="vb-page">
+                <div class="vb-hub">
+                    <nav class="vb-hub-tabs" aria-label="Cài đặt">
+                        <button type="button" class="vb-hub-tab active" data-hub="settings" data-sub="vieneu">VieNeu</button>
+                        <button type="button" class="vb-hub-tab" data-hub="settings" data-sub="edge">Edge</button>
+                    </nav>
+                    <div class="vb-hub-panel active" data-hub="settings" data-sub="vieneu">
+                <div class="vb-settings">
+                    <div class="vb-settings-top">
+                        <div>
+                            <h1>Cài đặt VieNeu</h1>
+                            <p class="vb-settings-desc">Áp dụng tab VieNeu Turbo (48 kHz) và VieNeu Nano (24 kHz) · offline · WAV</p>
+                        </div>
+                        <div class="vb-settings-actions">
+                            <button type="button" id="btn-save-settings-vieneu" class="vb-btn vb-btn-primary vb-btn-sm">Lưu</button>
+                            <button type="button" id="btn-reset-settings-vieneu" class="vb-btn vb-btn-ghost vb-btn-sm">Mặc định</button>
+                            <button type="button" id="btn-reload-engine" class="vb-btn vb-btn-secondary vb-btn-sm">Tải lại engine</button>
+                        </div>
+                    </div>
+                    <div class="vb-settings-grid">
+                        <div class="vb-settings-section">
+                            <h3>Xuất file (dùng chung)</h3>
+                            <div class="vb-form-row vb-form-row-3col">
+                                <label for="set-outputDir">Thư mục</label>
+                                <input type="text" id="set-outputDir" readonly placeholder="Tải xuống">
+                                <button type="button" id="btn-set-outputDir" class="vb-btn vb-btn-secondary vb-btn-sm">Chọn</button>
+                            </div>
+                            <p class="vb-field-note">Cả VieNeu và Edge đều lưu file vào thư mục này.</p>
+                        </div>
+                        <div class="vb-settings-section">
+                            <h3>Python &amp; model</h3>
+                            <div class="vb-form-row" id="row-pythonPath"><label for="set-pythonPath">Python</label><input type="text" id="set-pythonPath" placeholder="Để trống = tự tìm py -3"></div>
+                            <div class="vb-form-row"><label for="set-threads">Luồng ONNX</label><input type="number" id="set-threads" min="0" max="32" value="6"></div>
+                            <div class="vb-form-row"><label for="set-batchWorkers">Luồng batch</label><input type="number" id="set-batchWorkers" min="1" max="8" value="2"></div>
+                            <p class="vb-field-note">Luồng batch = số tác vụ synth song song. VieNeu tốn RAM (khuyến nghị 1–2); Edge có thể 2–4.</p>
+                            <input type="hidden" id="set-device" value="cpu">
+                        </div>
+                        <div class="vb-settings-section">
+                            <h3>Giọng đọc mặc định</h3>
+                            <div class="vb-form-row"><label for="set-speed">Tốc độ</label><input type="number" id="set-speed" min="0.5" max="2" step="0.05" value="1"></div>
+                            <div class="vb-form-row">
+                                <label>Delay giữa file (s)</label>
+                                <div class="vb-form-row-inline">
+                                    <input type="number" id="set-delayMin" min="0" max="120" step="0.5" value="0">
+                                    <span>–</span>
+                                    <input type="number" id="set-delayMax" min="0" max="120" step="0.5" value="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="vb-settings-section">
+                            <h3>Ngắt nhịp im lặng (s)</h3>
+                            <div class="vb-form-row"><label for="set-silenceLinePunct">Dòng + dấu câu</label><input type="number" id="set-silenceLinePunct" step="0.05" value="0.35"></div>
+                            <div class="vb-form-row"><label for="set-silenceLineNoPunct">Dòng không dấu</label><input type="number" id="set-silenceLineNoPunct" step="0.05" value="0.55"></div>
+                            <div class="vb-form-row"><label for="set-silenceParagraph">Đoạn văn</label><input type="number" id="set-silenceParagraph" step="0.05" value="0.75"></div>
+                            <div class="vb-form-row"><label for="set-silenceChunk">Giữa chunk</label><input type="number" id="set-silenceChunk" step="0.05" value="0.15"></div>
+                        </div>
+                        <div class="vb-settings-section span-2">
+                            <h3>Tiền xử lý văn bản</h3>
+                            <div class="vb-form-row-checks">
+                                <label><input type="checkbox" id="set-useSeaG2p" checked> sea-g2p — đọc số, ngày tháng (VieNeu &amp; Edge)</label>
+                                <label><input type="checkbox" id="set-splitByLine" checked> Tách theo dòng khi synth VieNeu</label>
+                                <label><input type="checkbox" id="set-stripHash" checked> Bỏ ký tự # đầu dòng</label>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="vb-settings-foot">
+                        Mã nguồn:
+                        <a href="#" class="vb-link vb-source-link" data-url="https://github.com/pnnbao97/VieNeu-TTS">github.com/pnnbao97/VieNeu-TTS</a>
+                        · Phím tắt: Ctrl+Enter chạy · Esc dừng
+                    </p>
+                </div>
+                    </div>
+                    <div class="vb-hub-panel" data-hub="settings" data-sub="edge">
+                <div class="vb-settings">
+                    <div class="vb-settings-top">
+                        <div>
+                            <h1>Cài đặt Edge TTS</h1>
+                            <p class="vb-settings-desc">Engine online · cần mạng · MP3 · chỉ áp dụng tab Edge TTS</p>
+                        </div>
+                        <div class="vb-settings-actions">
+                            <button type="button" id="btn-save-settings-edge" class="vb-btn vb-btn-primary vb-btn-sm">Lưu</button>
+                            <button type="button" id="btn-reset-settings-edge" class="vb-btn vb-btn-ghost vb-btn-sm">Mặc định Edge</button>
+                            <button type="button" id="btn-reload-edge" class="vb-btn vb-btn-secondary vb-btn-sm">Tải lại engine</button>
+                        </div>
+                    </div>
+                    <div class="vb-settings-grid vb-settings-grid-single">
+                        <div class="vb-settings-section">
+                            <h3>Giọng &amp; tham số mặc định</h3>
+                            <div class="vb-form-row"><label for="set-edgeVoiceMode">Loại giọng</label>
+                                <select id="set-edgeVoiceMode">
+                                    <option value="multilingual">Đa ngôn ngữ (Multilingual)</option>
+                                    <option value="vietnamese">Tiếng Việt chuyên (HoaiMy · NamMinh)</option>
+                                </select>
+                            </div>
+                            <div class="vb-form-row"><label for="set-edgeVoice">Giọng mặc định</label><input type="text" id="set-edgeVoice" placeholder="vi-VN-HoaiMyNeural"></div>
+                            <div class="vb-form-row"><label for="set-edgeRate">Tốc độ %</label><input type="number" id="set-edgeRate" min="-50" max="100" value="0"></div>
+                            <div class="vb-form-row"><label for="set-edgePitch">Cao độ Hz</label><input type="number" id="set-edgePitch" min="-50" max="50" value="0"></div>
+                            <div class="vb-form-row"><label for="set-edgeVolume">Âm lượng %</label><input type="number" id="set-edgeVolume" min="-50" max="50" value="0"></div>
+                        </div>
+                        <div class="vb-settings-section">
+                            <h3>Yêu cầu kỹ thuật</h3>
+                            <ul class="vb-help-list compact" id="edge-tech-requirements">
+                                <li>Cần <strong>internet</strong> khi chạy batch Edge.</li>
+                                <li>Python worker: <code>edge-tts</code>, <code>pydub</code> — cài qua <code>pip install -r python/requirements.txt</code>.</li>
+                                <li>Ghép MP3 cần <strong>ffmpeg</strong> trong PATH.</li>
+                                <li>Luồng batch (song song): cấu hình tại tab <button type="button" class="vb-link-btn" data-goto="settings-vieneu">Cài đặt VieNeu</button>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="vb-settings-foot">
+                        Mã nguồn:
+                        <a href="#" class="vb-link vb-source-link" data-url="https://github.com/rany2/edge-tts">github.com/rany2/edge-tts</a>
+                    </p>
+                </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-help" class="vb-page">
+                <div class="vb-help">
+                    <div class="vb-settings-top">
+                        <div>
+                            <h1>Hướng dẫn sử dụng</h1>
+                            <p class="vb-settings-desc">Quy trình batch, cột bảng dữ liệu và import Excel</p>
+                        </div>
+                        <div class="vb-settings-actions">
+                            <button type="button" id="btn-download-template" class="vb-btn vb-btn-primary vb-btn-sm">Lưu file Excel mẫu…</button>
+                            <button type="button" id="btn-open-bundled-template" class="vb-btn vb-btn-secondary vb-btn-sm">Mở mẫu đi kèm</button>
+                        </div>
+                    </div>
+
+                    <div class="vb-help-grid">
+                        <article class="vb-help-card">
+                            <h2>Quy trình nhanh</h2>
+                            <ol class="vb-help-steps">
+                                <li>Chọn tab phù hợp máy: <strong>VieNeu Turbo</strong> (CPU mạnh, 48 kHz), <strong>VieNeu Nano</strong> (máy yếu, 24 kHz), hoặc <strong>Edge TTS</strong> (cần mạng).</li>
+                                <li>Import dữ liệu: thư mục TXT, file Excel, hoặc thêm dòng thủ công. Text dài tự tách thành nhiều tác vụ (Cài đặt VieNeu).</li>
+                                <li>Chọn giọng và chỉnh tốc độ trên thanh cấu hình (ghi đè mặc định trong Cài đặt).</li>
+                                <li>Chọn thư mục xuất ở footer hoặc trong Cài đặt VieNeu.</li>
+                                <li>Bấm <strong>Bắt đầu batch</strong> — theo dõi Console phía dưới bảng.</li>
+                                <li><strong>Luồng batch</strong> — số tác vụ chạy song song (Cài đặt VieNeu, mặc định 2).</li>
+                            </ol>
+                        </article>
+
+                        <article class="vb-help-card span-2">
+                            <h2>Các cột trong bảng</h2>
+                            <div class="vb-help-table-wrap">
+                                <table class="vb-help-table">
+                                    <thead>
+                                        <tr><th>Cột</th><th>Mô tả</th><th>Ghi chú</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>☑ Chọn</td><td>Chọn nhiều dòng để xóa hàng loạt.</td><td>Dùng ô đầu bảng để chọn tất cả trang hiện tại.</td></tr>
+                                        <tr><td>STT</td><td>Số thứ tự hiển thị — tự động khi thêm/import.</td><td>Có thể sắp xếp cột.</td></tr>
+                                        <tr><td>Nhóm</td><td>Nhãn phân loại (chương, dự án…).</td><td>Tùy chọn; hỗ trợ lọc và sắp xếp.</td></tr>
+                                        <tr><td>Tên file</td><td>Tên file audio đầu ra (không gồm đuôi).</td><td>Trống → app tự đặt tên theo STT.</td></tr>
+                                        <tr><td>Nội dung văn bản</td><td>Text cần chuyển thành giọng nói.</td><td>VieNeu v3: tag cảm xúc <code>[cười]</code>, <code>[thở dài]</code> trong text.</td></tr>
+                                        <tr><td>Trạng thái</td><td>Chờ · Đang chạy · Hoàn thành · Lỗi.</td><td>Lọc theo trạng thái ở toolbar.</td></tr>
+                                        <tr><td>Tiến độ</td><td>Thanh % khi đang synth dòng đó.</td><td>—</td></tr>
+                                        <tr><td>Kết quả</td><td>Link mở file WAV (VieNeu) hoặc MP3 (Edge).</td><td>Click để mở hoặc hiện trong thư mục.</td></tr>
+                                        <tr><td>Thao tác</td><td>Chạy một dòng · Sửa · Xóa dòng.</td><td>Icon ▶ chạy riêng từng dòng.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </article>
+
+                        <article class="vb-help-card">
+                            <h2>Import Excel</h2>
+                            <p>Sheet đầu tiên, mỗi dòng = một tác vụ. Cột được nhận diện (tiếng Việt hoặc tiếng Anh):</p>
+                            <ul class="vb-help-list">
+                                <li><strong>Nội dung văn bản</strong> — bắt buộc (<code>Text</code>, <code>Prompt</code>…)</li>
+                                <li><strong>Tên file</strong> — tùy chọn (<code>Name Save</code>)</li>
+                                <li><strong>Nhóm</strong> — tùy chọn (<code>Group</code>)</li>
+                            </ul>
+                            <p class="vb-help-note">Dùng nút <em>Lưu file Excel mẫu</em> ở góc trên để tải template chuẩn.</p>
+                        </article>
+
+                        <article class="vb-help-card">
+                            <h2>Import khác</h2>
+                            <ul class="vb-help-list">
+                                <li><strong>Import thư mục</strong> — quét file <code>.txt</code> (thư mục con → cột Nhóm).</li>
+                                <li><strong>Import TXT</strong> — một hoặc nhiều file text.</li>
+                                <li><strong>Xuất JSON</strong> — sao lưu danh sách tác vụ.</li>
+                                <li><strong>Tách đoạn tự động</strong> — văn bản dài được chia khi nhập, dán hoặc import (~1200 ký tự/đoạn, chỉnh trong Cài đặt VieNeu).</li>
+                            </ul>
+                        </article>
+
+                        <article class="vb-help-card">
+                            <h2>Hai engine khác nhau</h2>
+                            <ul class="vb-help-list">
+                                <li><strong>VieNeu Turbo</strong> — offline 48 kHz, chất lượng cao, CPU mạnh → <button type="button" class="vb-link-btn" data-goto="settings-vieneu">Cài đặt VieNeu</button></li>
+                                <li><strong>VieNeu Nano</strong> — offline 24 kHz, nhanh hơn trên máy yếu (chất lượng thấp hơn, nhất là tiếng Anh)</li>
+                                <li><strong>Edge TTS</strong> — online, cần mạng, MP3 → <button type="button" class="vb-link-btn" data-goto="settings-edge">Cài đặt Edge</button></li>
+                            </ul>
+                            <p class="vb-help-note">Mỗi tab có danh sách tác vụ riêng. Bảng hiển thị toàn bộ tác vụ (cuộn trong vùng bảng), không phân trang.</p>
+                        </article>
+
+                        <article class="vb-help-card span-2">
+                            <h2>Mã nguồn — cảm ơn tác giả</h2>
+                            <p>Khepree TTS Batch AI xây dựng trên các dự án mã nguồn mở sau. Xin trân trọng cảm ơn tác giả và cộng đồng đóng góp.</p>
+                            <ul class="vb-source-list">
+                                <li>
+                                    <strong>VieNeu-TTS</strong> — engine TTS tiếng Việt offline (v3 Turbo + v3 Nano)
+                                    <br>
+                                    <a href="#" class="vb-link vb-source-link" data-url="https://github.com/pnnbao97/VieNeu-TTS">https://github.com/pnnbao97/VieNeu-TTS</a>
+                                </li>
+                                <li>
+                                    <strong>edge-tts</strong> — thư viện Python gọi dịch vụ TTS Microsoft Edge
+                                    <br>
+                                    <a href="#" class="vb-link vb-source-link" data-url="https://github.com/rany2/edge-tts">https://github.com/rany2/edge-tts</a>
+                                </li>
+                            </ul>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-khepree" class="vb-page">
+                <div class="vb-hub">
+                    <nav class="vb-hub-tabs" aria-label="Khepree">
+                        <button type="button" class="vb-hub-tab active" data-hub="khepree" data-sub="license">Bản quyền</button>
+                        <button type="button" class="vb-hub-tab" data-hub="khepree" data-sub="contact">Liên hệ</button>
+                    </nav>
+                    <div class="vb-hub-panel active" data-hub="khepree" data-sub="license">
+                <div class="vb-license">
+                    <header class="vb-sticky-header">
+                        <div class="vb-header-row">
+                            <div>
+                                <h1 class="vb-page-title">Bản quyền Khepree</h1>
+                                <p class="vb-page-sub">Đăng nhập tài khoản Khepree để kích hoạt TTS trên thiết bị này.</p>
+                            </div>
+                            <span id="license-status-chip" class="vb-status-chip is-loading">Đang kiểm tra</span>
+                        </div>
+                    </header>
+                    <div class="vb-license-body">
+                        <p id="license-message" class="vb-page-sub"></p>
+                        <dl class="vb-license-meta">
+                            <div><dt>Trạng thái</dt><dd id="license-status">—</dd></div>
+                            <div><dt>Tài khoản</dt><dd id="license-user">—</dd></div>
+                            <div><dt>Gói</dt><dd id="license-plan">—</dd></div>
+                        </dl>
+                        <div class="vb-header-actions" style="margin-top:1rem;gap:.5rem;flex-wrap:wrap">
+                            <button type="button" class="vb-btn vb-btn-primary" id="license-login">Đăng nhập Khepree</button>
+                            <button type="button" class="vb-btn vb-btn-ghost" id="license-refresh">Làm mới</button>
+                            <button type="button" class="vb-btn vb-btn-ghost" id="license-product">Trang sản phẩm</button>
+                            <button type="button" class="vb-btn vb-btn-ghost" id="license-logout">Đăng xuất</button>
+                        </div>
+                        <div id="license-offers" class="vb-license-offers" hidden></div>
+                        <p class="vb-help-note" style="margin-top:1.25rem">
+                            Dùng thử 1 ngày miễn phí · Tháng 49.000&nbsp;VND · Năm 499.000&nbsp;VND.
+                            Tổng hợp giọng chỉ mở khi bản quyền ở trạng thái Active.
+                        </p>
+                    </div>
+                </div>
+                    </div>
+                    <div class="vb-hub-panel" data-hub="khepree" data-sub="contact">
+                <div class="vb-contact">
+                    <header class="vb-contact-header">
+                        <div class="vb-contact-brand">
+                            <img src="/khepree-logo.png" alt="" class="vb-contact-logo" aria-hidden="true">
+                            <div class="vb-contact-brand-text">
+                                <span class="vb-brand-name-line">Khepree</span>
+                                <span class="vb-brand-name-line">TTS Batch AI</span>
+                            </div>
+                        </div>
+                        <h1 class="vb-page-title">Liên hệ Khepree Labs</h1>
+                        <p class="vb-page-sub">Theo dõi Khepree Labs hoặc liên hệ trực tiếp qua các kênh chính thức.</p>
+                    </header>
+                    <div class="vb-contact-grid">
+                        <button type="button" class="vb-contact-card vb-source-link" data-url="https://www.facebook.com/KhepreeLabs" aria-label="Mở Facebook Khepree Labs">
+                            <span class="vb-contact-card-icon" aria-hidden="true"><svg class="vb-ico"><use href="#ico-facebook"/></svg></span>
+                            <span class="vb-contact-card-body">
+                                <span class="vb-contact-card-label">Facebook</span>
+                                <span class="vb-contact-card-display">Khepree Labs</span>
+                            </span>
+                            <svg class="vb-ico vb-contact-card-ext" aria-hidden="true"><use href="#ico-external"/></svg>
+                        </button>
+                        <button type="button" class="vb-contact-card vb-source-link" data-url="https://www.youtube.com/@KhepreeLabs" aria-label="Mở YouTube Khepree Labs">
+                            <span class="vb-contact-card-icon" aria-hidden="true"><svg class="vb-ico"><use href="#ico-youtube"/></svg></span>
+                            <span class="vb-contact-card-body">
+                                <span class="vb-contact-card-label">YouTube</span>
+                                <span class="vb-contact-card-display">KhepreeLabs</span>
+                            </span>
+                            <svg class="vb-ico vb-contact-card-ext" aria-hidden="true"><use href="#ico-external"/></svg>
+                        </button>
+                        <button type="button" class="vb-contact-card vb-source-link" data-url="https://www.tiktok.com/@khepreelabs" aria-label="Mở TikTok Khepree Labs">
+                            <span class="vb-contact-card-icon" aria-hidden="true"><svg class="vb-ico"><use href="#ico-tiktok"/></svg></span>
+                            <span class="vb-contact-card-body">
+                                <span class="vb-contact-card-label">TikTok</span>
+                                <span class="vb-contact-card-display">khepreelabs</span>
+                            </span>
+                            <svg class="vb-ico vb-contact-card-ext" aria-hidden="true"><use href="#ico-external"/></svg>
+                        </button>
+                        <button type="button" class="vb-contact-card vb-source-link" data-url="https://t.me/KhepreeLabs" aria-label="Mở Telegram Khepree Labs">
+                            <span class="vb-contact-card-icon" aria-hidden="true"><svg class="vb-ico"><use href="#ico-telegram"/></svg></span>
+                            <span class="vb-contact-card-body">
+                                <span class="vb-contact-card-label">Telegram</span>
+                                <span class="vb-contact-card-display">KhepreeLabs</span>
+                            </span>
+                            <svg class="vb-ico vb-contact-card-ext" aria-hidden="true"><use href="#ico-external"/></svg>
+                        </button>
+                        <button type="button" class="vb-contact-card vb-source-link" data-url="https://zalo.me/0867268149" aria-label="Liên hệ Khepree Labs qua Zalo">
+                            <span class="vb-contact-card-icon" aria-hidden="true"><svg class="vb-ico"><use href="#ico-zalo"/></svg></span>
+                            <span class="vb-contact-card-body">
+                                <span class="vb-contact-card-label">Điện thoại / Zalo</span>
+                                <span class="vb-contact-card-display">0867.268.149</span>
+                            </span>
+                            <svg class="vb-ico vb-contact-card-ext" aria-hidden="true"><use href="#ico-external"/></svg>
+                        </button>
+                    </div>
+                </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module" src="/src/batch/app.js"></script>
+</body>
+</html>

@@ -29,9 +29,20 @@ dist-ssr
 dist/*
 .wrangler/*
 public/tts-model/*
-scripts/*
+resources/runtime/
+release/
 bak/*
 upload-model-web/*
 .cursor/*
+!.cursor/rules/
+!.cursor/rules/**
 scraps/*
 .cursorignore
+
+# Heavy TTS model weights (download via npm run ensure:models)
+models/
+
+# Python / temp artifacts
+python/__pycache__/
+*.pyc
+temp_test_bundled.mp3

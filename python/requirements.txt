@@ -1,0 +1,4 @@
+vieneu>=3.5.4
+sea-g2p>=0.9.1
+edge-tts>=6.1.0
+pydub>=0.25.0
