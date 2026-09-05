@@ -1,0 +1,13 @@
+[
+  { "id": "auto", "label": "Auto" },
+  { "id": "en", "label": "English" },
+  { "id": "zh", "label": "Chinese" },
+  { "id": "ja", "label": "Japanese" },
+  { "id": "yue", "label": "Cantonese" },
+  { "id": "ko", "label": "Korean" },
+  { "id": "auto_yue", "label": "Auto (Yue)" },
+  { "id": "all_zh", "label": "All Chinese" },
+  { "id": "all_ja", "label": "All Japanese" },
+  { "id": "all_yue", "label": "All Cantonese" },
+  { "id": "all_ko", "label": "All Korean" }
+]

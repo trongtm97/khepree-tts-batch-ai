@@ -19,7 +19,25 @@
     "setup:python": "pip install -r python/requirements.txt",
     "electron": "electron .",
     "test:engines": "electron scripts/test-engines.cjs",
-    "test:khepree": "node electron/khepree/catalog.selfcheck.cjs && node electron/khepree/auth-protocol.selfcheck.cjs"
+    "test:engine-ipc": "electron scripts/test-engine-ipc.cjs",
+    "test:engine-service": "node src/batch/engine-service.selfcheck.mjs && electron scripts/test-engine-service.cjs",
+    "test:khepree": "node electron/khepree/catalog.selfcheck.cjs && node electron/khepree/auth-protocol.selfcheck.cjs",
+    "test:paths-models": "electron electron/paths-models.selfcheck.cjs",
+    "test:model-download": "electron electron/model-download-manager.selfcheck.cjs",
+    "test:engine-runtime": "electron electron/engine-runtime-manager.selfcheck.cjs",
+    "test:hardware": "electron electron/hardware-detector.selfcheck.cjs",
+    "test:installer-audit": "node electron/installer-audit.selfcheck.cjs",
+    "test:benchmark": "electron electron/benchmark-runner.selfcheck.cjs",
+    "test:supertonic": "electron electron/supertonic.selfcheck.cjs",
+    "test:kitten": "electron electron/kitten.selfcheck.cjs",
+    "test:kokoro": "electron electron/kokoro.selfcheck.cjs",
+    "test:piper": "electron electron/piper.selfcheck.cjs",
+    "test:chatterbox": "electron electron/chatterbox.selfcheck.cjs",
+    "test:qwen3": "electron electron/qwen3.selfcheck.cjs",
+    "test:spark": "electron electron/spark.selfcheck.cjs",
+    "test:gpt-sovits": "electron electron/gpt-sovits.selfcheck.cjs",
+    "test:registry": "node electron/engine-registry.selfcheck.cjs && node electron/language-support.selfcheck.cjs && node electron/engine-pool-manager.selfcheck.cjs && node electron/settings-migrate.selfcheck.cjs && node scripts/jobs-isolation.selfcheck.cjs && node src/batch/nav-alias.selfcheck.cjs && node src/batch/tts-tab-engine.selfcheck.cjs && node src/batch/engine-selector.selfcheck.mjs && node src/batch/language-detect.selfcheck.mjs",
+    "test:selfcheck": "npm run test:registry && npm run test:paths-models && npm run test:model-download && npm run test:engine-runtime && npm run test:hardware && npm run test:benchmark && npm run test:installer-audit && npm run test:supertonic && npm run test:kitten && npm run test:kokoro && npm run test:piper && npm run test:chatterbox && npm run test:qwen3 && npm run test:spark && npm run test:gpt-sovits && npm run test:khepree && node src/batch/khepree-access-messages.selfcheck.mjs"
   },
   "build": {
     "appId": "com.trong.khepree.ttsbatchai",
@@ -47,8 +65,8 @@
     ],
     "asar": true,
     "extraResources": [
-      { "from": "python", "to": "python" },
-      { "from": "models", "to": "models" },
+      { "from": "python", "to": "python", "filter": ["**/*", "!**/__pycache__/**"] },
+      { "from": "models/vieneu", "to": "models/vieneu" },
       { "from": "resources/runtime/${platform}", "to": "runtime" }
     ],
     "win": {

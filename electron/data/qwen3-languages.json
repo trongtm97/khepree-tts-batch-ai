@@ -1,0 +1,13 @@
+[
+  { "id": "Auto", "label": "Auto" },
+  { "id": "Chinese", "label": "Chinese" },
+  { "id": "English", "label": "English" },
+  { "id": "Japanese", "label": "Japanese" },
+  { "id": "Korean", "label": "Korean" },
+  { "id": "German", "label": "German" },
+  { "id": "French", "label": "French" },
+  { "id": "Russian", "label": "Russian" },
+  { "id": "Portuguese", "label": "Portuguese" },
+  { "id": "Spanish", "label": "Spanish" },
+  { "id": "Italian", "label": "Italian" }
+]

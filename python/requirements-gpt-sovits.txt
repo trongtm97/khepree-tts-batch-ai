@@ -1,0 +1,39 @@
+# Optional: GPT-SoVITS inference only (RVC-Boss/GPT-SoVITS).
+# Installed into userData/runtimes/gpt-sovits/site-packages — NEVER core bundle.
+# No Gradio WebUI. No FastAPI server. No Conda. No training deps beyond inference.
+#
+# Upstream source (GPT_SoVITS/, tools/) via shallow git clone into runtime upstream/.
+#
+numpy<2.0
+scipy
+librosa==0.10.2
+numba
+tqdm
+cn2an
+pypinyin
+pyopenjtalk>=0.4.1
+g2p_en
+torchaudio
+sentencepiece
+transformers>=4.51,<5
+peft<0.18.0
+chardet
+PyYAML
+psutil
+jieba
+split-lang
+fast_langdetect>=0.3.1
+wordsegment
+rotary_embedding_torch
+ToJyutping
+g2pk2
+ko_pron
+opencc
+x_transformers
+torchmetrics<=1.5
+ctranslate2>=4.0,<5
+av>=11
+soundfile>=0.12.0
+torch>=2.1.0
+huggingface_hub>=0.24.0
+# intentionally omit: gradio, fastapi, tensorboard, funasr, modelscope (training/WebUI)

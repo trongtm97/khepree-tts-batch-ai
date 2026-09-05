@@ -1,0 +1,7 @@
+# Optional: Qwen3-TTS 0.6B only (CustomVoice + Base).
+# Installed into userData/runtimes/qwen3/site-packages — NEVER core bundle.
+#
+#   pip install --target <userData>/runtimes/qwen3/site-packages -r python/requirements-qwen3.txt
+#
+# Do NOT add 1.7B VoiceDesign here.
+qwen-tts>=0.1.0

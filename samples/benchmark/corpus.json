@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "description": "Khepree project-authored micro corpus for local TTS benchmarks. No quality scoring.",
+  "items": [
+    {
+      "id": "vi-short",
+      "lang": "vi",
+      "kind": "short",
+      "text": "Xin chào. Đây là bài kiểm tra ngắn."
+    },
+    {
+      "id": "vi-medium",
+      "lang": "vi",
+      "kind": "medium",
+      "text": "Hôm nay trời đẹp. Tôi đang kiểm tra tốc độ đọc của engine trên máy này với một đoạn văn vừa phải, đủ dài để đo thời gian tổng hợp ổn định."
+    },
+    {
+      "id": "vi-long",
+      "lang": "vi",
+      "kind": "long",
+      "text": "Benchmark cục bộ giúp so sánh thời gian khởi động và tốc độ tổng hợp giữa các engine đã cài trên cùng một máy. Kết quả chỉ phản ánh hiệu năng đo được, không phải điểm chất lượng cảm nhận. Người dùng nên chọn engine theo ngôn ngữ, tác vụ, phần cứng và số liệu thực tế trên máy của mình thay vì tin vào xếp hạng chung chung."
+    },
+    {
+      "id": "vi-numbers",
+      "lang": "vi",
+      "kind": "numbers",
+      "text": "Số: 12, 34.5 và 1.000. Ngày 05/09/2026. Giá 99.000đ; giờ 14:30!"
+    },
+    {
+      "id": "en-short",
+      "lang": "en",
+      "kind": "short",
+      "text": "Hello. This is a short test."
+    },
+    {
+      "id": "en-medium",
+      "lang": "en",
+      "kind": "medium",
+      "text": "Today I am measuring synthesis speed on this computer with a medium-length English paragraph so the timing stays stable across engines."
+    },
+    {
+      "id": "en-long",
+      "lang": "en",
+      "kind": "long",
+      "text": "A local benchmark records init time, synthesis time, and realtime factor for installed engines on this hardware fingerprint. It does not invent a quality score. Prefer engines that match your language and task, then use measured speed when multiple options remain."
+    }
+  ]
+}

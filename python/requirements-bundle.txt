@@ -1,3 +1,6 @@
+# Core runtime ONLY: VieNeu + Edge TTS + lightweight ONNX engines (Supertonic).
+# Do NOT add Chatterbox/Qwen/Spark/Torch/CUDA here — heavy engines get
+# their own runtime profile (registry.runtimeId) and separate requirements.
 # Phụ thuộc runtime (vieneu cài riêng bằng --no-deps trong prepare-runtime)
 onnxruntime>=1.20.0
 numpy
@@ -11,4 +14,6 @@ huggingface_hub
 sea-g2p>=0.9.1
 edge-tts>=6.1.0
 pydub>=0.25.0
-gradio>=5.49.1
+# intentionally omit: gradio (unused by core workers; bloats installer)
+# Official Supertonic 3 Python SDK (ONNX only — no Torch)
+supertonic>=0.3.0

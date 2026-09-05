@@ -1,5 +1,7 @@
 import { TTSTabManager } from './tts-tab.js';
 import { formatKhepreeAccessError } from './khepree-access-messages.js';
+import { resolveEngineId } from './engine-meta.js';
+import { createEngineSelector } from './engine-selector.js';
 
 import {
 
@@ -28,6 +30,8 @@ const app = {
     settings: { ...DEFAULT_SETTINGS },
 
     tabManager: null,
+
+    engineSelector: null,
 
 };
 
@@ -192,6 +196,25 @@ const TAB_ALIASES = {
     'settings-edge': { tab: 'settings', sub: 'edge' },
     license: { tab: 'khepree', sub: 'license' },
     contact: { tab: 'khepree', sub: 'contact' },
+    nano: { tab: 'batch', engine: 'v3nano' },
+    edge: { tab: 'batch', engine: 'edge' },
+    vieneu: { tab: 'batch', engine: 'vieneu' },
+    v3nano: { tab: 'batch', engine: 'v3nano' },
+    'vieneu-turbo': { tab: 'batch', engine: 'vieneu' },
+    'vieneu-nano': { tab: 'batch', engine: 'v3nano' },
+    supertonic: { tab: 'batch', engine: 'supertonic' },
+    kitten: { tab: 'batch', engine: 'kitten' },
+    kokoro: { tab: 'batch', engine: 'kokoro' },
+    piper: { tab: 'batch', engine: 'piper' },
+    'chatterbox-nano': { tab: 'batch', engine: 'chatterbox' },
+    'chatterbox-turbo': { tab: 'batch', engine: 'chatterbox' },
+    chatterbox: { tab: 'batch', engine: 'chatterbox' },
+    qwen3: { tab: 'batch', engine: 'qwen3' },
+    'qwen3-tts': { tab: 'batch', engine: 'qwen3' },
+    spark: { tab: 'batch', engine: 'spark' },
+    'spark-tts': { tab: 'batch', engine: 'spark' },
+    'gpt-sovits': { tab: 'batch', engine: 'gpt-sovits' },
+    gptsovits: { tab: 'batch', engine: 'gpt-sovits' },
 };
 
 const HUB_DEFAULT_SUB = { settings: 'vieneu', khepree: 'license' };
@@ -217,6 +240,9 @@ function showTab(rawTab) {
         s.classList.toggle('active', s.id === `tab-${tab}`);
     });
     if (sub) showHubSub(tab, sub);
+    if (tab === 'batch' && alias?.engine) {
+        app.tabManager?.showEngine(alias.engine);
+    }
 }
 
 function initNavigation() {
@@ -438,8 +464,6 @@ function initLicenseUI() {
     window.api.khepreeGetState().then(renderLicenseState);
 }
 
-
-
 async function init() {
 
     if (!window.api) {
@@ -473,6 +497,12 @@ async function init() {
     app.tabManager = new TTSTabManager(app);
 
     app.tabManager.init();
+
+    app.engineSelector = createEngineSelector(app);
+    await app.engineSelector.init();
+
+    const selected = resolveEngineId(app.settings.selectedBatchEngine || 'vieneu');
+    app.tabManager.showEngine(selected);
 
 }
 

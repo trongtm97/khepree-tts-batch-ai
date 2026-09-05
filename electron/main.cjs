@@ -5,11 +5,37 @@ const Store = require('electron-store');
 const Importer = require('./io/importer.cjs');
 const TextChunker = require('./io/text-chunker.cjs');
 const { createStaticServer } = require('./static-server.cjs');
-const { VieNeuEngine, loadAvailableModes } = require('./vieneu-engine.cjs');
-const { EdgeTTSEngine } = require('./edge-engine.cjs');
-const { EnginePool } = require('./engine-pool.cjs');
 const paths = require('./paths.cjs');
+const { EnginePoolManager } = require('./engine-pool-manager.cjs');
+const { createJobsStore } = require('./jobs-store.cjs');
+const {
+    migrateSettingsOnLoad,
+    migrateSettingsOnSave,
+    SETTINGS_SCHEMA_VERSION,
+    DEFAULT_ENGINE_SETTINGS,
+} = require('./settings-migrate.cjs');
+const { createEngineIpc } = require('./engine-ipc.cjs');
+const { createModelDownloadIpc } = require('./model-download-ipc.cjs');
+const { createHardwareIpc } = require('./hardware-ipc.cjs');
+const { createBenchmarkIpc } = require('./benchmark-ipc.cjs');
+const { registerSupertonicPackage } = require('./supertonic-package.cjs');
+const { registerKittenPackages } = require('./kitten-package.cjs');
+const { registerKokoroPackages } = require('./kokoro-package.cjs');
+const { registerPiperPackages } = require('./piper-package.cjs');
+const { registerChatterboxPackages } = require('./chatterbox-package.cjs');
+const { registerQwen3Packages } = require('./qwen3-package.cjs');
+const { registerSparkPackages } = require('./spark-package.cjs');
+const { registerGptSovitsPackages } = require('./gpt-sovits-package.cjs');
 const { KhepreeAccessService } = require('./khepree/access-service.cjs');
+
+registerSupertonicPackage();
+registerKittenPackages();
+registerKokoroPackages();
+registerPiperPackages();
+registerChatterboxPackages();
+registerQwen3Packages();
+registerSparkPackages();
+registerGptSovitsPackages();
 const { KhepreeHeartbeatService } = require('./khepree/heartbeat.cjs');
 const {
     PROTOCOL,
@@ -53,6 +79,7 @@ function requireKhepreeAccess() {
 const store = new Store({
     defaults: {
         settings: {
+            settingsSchemaVersion: SETTINGS_SCHEMA_VERSION,
             outputDir: '',
             model: 'v3turbo',
             voice: '',
@@ -81,6 +108,13 @@ const store = new Store({
             batchWorkers: 2,
             chunkMaxChars: 1200,
             chunkAutoOnImport: false,
+            selectedBatchEngine: 'vieneu',
+            modelStorageDir: '',
+            engineSettings: {
+                vieneu: { ...DEFAULT_ENGINE_SETTINGS.vieneu },
+                v3nano: { ...DEFAULT_ENGINE_SETTINGS.v3nano },
+                edge: { ...DEFAULT_ENGINE_SETTINGS.edge },
+            },
         },
     },
 });
@@ -88,9 +122,6 @@ const store = new Store({
 const PUBLIC_DIR = paths.getPublicDir();
 const DIST_DIR = paths.getDistDir();
 const DATA_DIR = path.join(app.getPath('userData'), 'data');
-const JOBS_VIENEU_FILE = path.join(DATA_DIR, 'tts-jobs-vieneu.json');
-const JOBS_NANO_FILE = path.join(DATA_DIR, 'tts-jobs-v3nano.json');
-const JOBS_EDGE_FILE = path.join(DATA_DIR, 'tts-jobs-edge.json');
 const HISTORY_FILE = path.join(DATA_DIR, 'tts-history.json');
 const TEMP_DIR = path.join(app.getPath('userData'), 'tts-temp');
 
@@ -98,50 +129,11 @@ const ICON_PATH = path.join(PUBLIC_DIR, 'khepree-logo.png');
 
 let mainWindow;
 let staticServer = null;
-let vieneuPool = null;
-let nanoPool = null;
-let edgePool = null;
+const enginePools = new EnginePoolManager();
 const isDev = !app.isPackaged;
 
 function batchWorkerCount(settings) {
     return Math.max(1, Math.min(8, Math.round(Number(settings?.batchWorkers) || 1)));
-}
-
-function getVieneuPool() {
-    const settings = getSettings();
-    const size = batchWorkerCount(settings);
-    if (!vieneuPool) {
-        vieneuPool = new EnginePool(VieNeuEngine, size);
-    } else {
-        vieneuPool.resize(size);
-    }
-    return vieneuPool;
-}
-
-function getNanoPool() {
-    const settings = getSettings();
-    const size = batchWorkerCount(settings);
-    if (!nanoPool) {
-        nanoPool = new EnginePool(VieNeuEngine, size);
-    } else {
-        nanoPool.resize(size);
-    }
-    return nanoPool;
-}
-
-function poolForMode(mode) {
-    return mode === 'v3nano' ? getNanoPool() : getVieneuPool();
-}
-
-function getEdgePool() {
-    const settings = getSettings();
-    const size = batchWorkerCount(settings);
-    if (!edgePool) {
-        edgePool = new EnginePool(EdgeTTSEngine, size);
-    } else {
-        edgePool.resize(size);
-    }
-    return edgePool;
 }
 
 function readJsonFile(filePath, fallback) {
@@ -168,9 +160,17 @@ function sanitizeFileName(name) {
 }
 
 function getSettings() {
-    const settings = { ...store.get('settings') };
+    let settings = migrateSettingsOnLoad({ ...store.get('settings') });
     if (settings.model && settings.model !== 'v3turbo' && settings.model !== 'v3nano') {
         settings.model = 'v3turbo';
+    }
+    paths.setModelStorageDir(settings.modelStorageDir || '');
+    // Persist one-time seed of engineSettings without thrashing every read:
+    // only write back when schema/engineSettings were missing before migrate.
+    const raw = store.get('settings') || {};
+    const needsPersist = !raw.engineSettings
+        || Number(raw.settingsSchemaVersion) < SETTINGS_SCHEMA_VERSION;
+    if (needsPersist) {
         store.set('settings', settings);
     }
     return settings;
@@ -209,11 +209,7 @@ function getEdgeSynthOptions(settings) {
     };
 }
 
-function jobsFileForEngine(engine) {
-    if (engine === 'edge') return JOBS_EDGE_FILE;
-    if (engine === 'v3nano') return JOBS_NANO_FILE;
-    return JOBS_VIENEU_FILE;
-}
+const jobsStore = createJobsStore(DATA_DIR, { readJsonFile, writeJsonFile });
 
 function getChunkOptions(settings) {
     const s = settings || getSettings();
@@ -289,9 +285,7 @@ if (!gotLock) {
 
     app.on('window-all-closed', async () => {
         khepreeHeartbeat?.stop();
-        vieneuPool?.stopAll();
-        nanoPool?.stopAll();
-        edgePool?.stopAll();
+        enginePools.shutdownAll();
         if (staticServer) await staticServer.close();
         if (process.platform !== 'darwin') app.quit();
     });
@@ -311,10 +305,15 @@ ipcMain.handle('app:info', () => ({
     hasBundledFfmpeg: Boolean(paths.resolveFfmpegBinary('ffmpeg')),
 }));
 ipcMain.handle('settings:save', (_, settings) => {
-    store.set('settings', settings || {});
-    if (vieneuPool) vieneuPool.resize(batchWorkerCount(settings));
-    if (nanoPool) nanoPool.resize(batchWorkerCount(settings));
-    if (edgePool) edgePool.resize(batchWorkerCount(settings));
+    const next = migrateSettingsOnSave(settings || {});
+    // Reject unsafe modelStorageDir before persist
+    if (next.modelStorageDir) {
+        const safe = paths.resolveSafeOptionalModelsRoot(next.modelStorageDir);
+        next.modelStorageDir = safe || '';
+    }
+    paths.setModelStorageDir(next.modelStorageDir || '');
+    store.set('settings', next);
+    enginePools.resizeAll(batchWorkerCount(next));
     return true;
 });
 
@@ -396,128 +395,35 @@ ipcMain.handle('import:openBundledTemplate', async () => {
     }
 });
 
-ipcMain.handle('tts:listModels', () => loadAvailableModes());
-
-ipcMain.handle('tts:init', async (_, { mode, engineOptions }) => {
-    try {
-        const settings = getSettings();
-        const targetMode = mode || settings.model || 'v3turbo';
-        const pool = poolForMode(targetMode);
-        const opts = engineOptions || getEngineOptions(settings);
-        const result = await pool.withEngine(async (engine) => {
-            if (!engine.ready) {
-                return engine.init(targetMode, settings.pythonPath, opts);
-            }
-            return engine.init(targetMode, settings.pythonPath, opts);
-        });
-        sendLog(`VieNeu-TTS sẵn sàng: ${result.mode} · ${pool.maxSize} worker`, 'success');
-        return result;
-    } catch (e) {
-        sendLog(`Lỗi khởi tạo VieNeu: ${e.message}`, 'error');
-        return { error: e.message };
-    }
+const engineApi = createEngineIpc({
+    ipcMain,
+    poolManager: enginePools,
+    getSettings,
+    getEngineOptions,
+    getSynthOptions,
+    getEdgeSynthOptions,
+    batchWorkerCount,
+    requireKhepreeAccess,
+    sendLog,
+    tempDir: TEMP_DIR,
 });
 
-ipcMain.handle('tts:reload', async () => {
-    try {
-        const settings = getSettings();
-        if (vieneuPool) {
-            vieneuPool.stopAll();
-            vieneuPool = null;
-        }
-        if (nanoPool) {
-            nanoPool.stopAll();
-            nanoPool = null;
-        }
-        const pool = getVieneuPool();
-        const result = await pool.withEngine((engine) =>
-            engine.init('v3turbo', settings.pythonPath, getEngineOptions(settings)));
-        sendLog(`Đã khởi động lại VieNeu · ${pool.maxSize} worker`, 'success');
-        return result;
-    } catch (e) {
-        sendLog(`Lỗi reload engine: ${e.message}`, 'error');
-        return { error: e.message };
-    }
+createModelDownloadIpc({
+    ipcMain,
+    BrowserWindow,
+    getMainWindow: () => mainWindow,
 });
 
-ipcMain.handle('edge:init', async (_, { voiceMode, pythonPath }) => {
-    try {
-        const settings = getSettings();
-        const pool = getEdgePool();
-        const mode = voiceMode || settings.edgeVoiceMode || 'vietnamese';
-        const result = await pool.withEngine((engine) =>
-            engine.init(mode, pythonPath || settings.pythonPath));
-        sendLog(`Edge TTS sẵn sàng (${mode}) · ${pool.maxSize} worker`, 'success');
-        return result;
-    } catch (e) {
-        sendLog(`Lỗi khởi tạo Edge TTS: ${e.message}`, 'error');
-        return { error: e.message };
-    }
-});
+createHardwareIpc({ ipcMain });
 
-ipcMain.handle('edge:reload', async () => {
-    try {
-        const settings = getSettings();
-        if (edgePool) {
-            edgePool.stopAll();
-            edgePool = null;
-        }
-        const pool = getEdgePool();
-        const result = await pool.withEngine((engine) =>
-            engine.init(settings.edgeVoiceMode || 'vietnamese', settings.pythonPath));
-        sendLog(`Đã khởi động lại Edge TTS · ${pool.maxSize} worker`, 'success');
-        return result;
-    } catch (e) {
-        return { error: e.message };
-    }
-});
-
-ipcMain.handle('edge:synthesize', async (_, { text, voice, options }) => {
-    const denied = requireKhepreeAccess();
-    if (denied) return denied;
-    try {
-        if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
-        const settings = getSettings();
-        const pool = getEdgePool();
-        const mode = settings.edgeVoiceMode || 'vietnamese';
-        const synthOpts = { ...getEdgeSynthOptions(settings), ...(options || {}) };
-        const tempFile = path.join(TEMP_DIR, `edge_${Date.now()}_${Math.random().toString(36).slice(2)}.mp3`);
-        const outPath = await pool.withEngine(async (engine) => {
-            if (!engine.ready) {
-                await engine.init(mode, settings.pythonPath);
-            }
-            return engine.synthesize(text, voice, tempFile, synthOpts);
-        });
-        const buffer = fs.readFileSync(outPath);
-        try { fs.unlinkSync(outPath); } catch (_) { /* ignore */ }
-        return { buffer, format: 'mp3' };
-    } catch (e) {
-        return { error: e.message };
-    }
-});
-
-ipcMain.handle('tts:synthesize', async (_, { text, voice, mode, options }) => {
-    const denied = requireKhepreeAccess();
-    if (denied) return denied;
-    try {
-        if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
-        const settings = getSettings();
-        const targetMode = mode || settings.model || 'v3turbo';
-        const pool = poolForMode(targetMode);
-        const synthOpts = { ...getSynthOptions(settings), ...(options || {}) };
-        const tempFile = path.join(TEMP_DIR, `tts_${Date.now()}_${Math.random().toString(36).slice(2)}.wav`);
-        const outPath = await pool.withEngine(async (engine) => {
-            if (!engine.ready || engine.mode !== targetMode) {
-                await engine.init(targetMode, settings.pythonPath, getEngineOptions(settings));
-            }
-            return engine.synthesize(text, voice, tempFile, synthOpts);
-        });
-        const buffer = fs.readFileSync(outPath);
-        try { fs.unlinkSync(outPath); } catch (_) { /* ignore */ }
-        return { buffer, format: 'wav' };
-    } catch (e) {
-        return { error: e.message };
-    }
+createBenchmarkIpc({
+    ipcMain,
+    BrowserWindow,
+    getMainWindow: () => mainWindow,
+    engineInit: engineApi.engineInit,
+    engineSynthesize: engineApi.engineSynthesize,
+    engineUnload: engineApi.engineUnload,
+    getSettings,
 });
 
 ipcMain.handle('khepree:getState', () => khepree?.publicState ?? { status: 'BOOTING', features: {} });
@@ -578,23 +484,11 @@ ipcMain.handle('tts:saveAudio', async (_, { buffer, outputDir, fileName, group, 
 });
 
 ipcMain.handle('jobs:save', (_, { engine, jobs }) => {
-    writeJsonFile(jobsFileForEngine(engine), jobs);
+    jobsStore.saveJobs(engine, jobs);
     return true;
 });
 
-ipcMain.handle('jobs:load', (_, engine) => {
-    const file = jobsFileForEngine(engine);
-    // Legacy tts-jobs.json only seeds Turbo. Nano/Edge must stay empty —
-    // seeding both VieNeu engines made prompts appear duplicated across tabs.
-    if (!fs.existsSync(file) && engine === 'vieneu') {
-        const legacy = readJsonFile(path.join(DATA_DIR, 'tts-jobs.json'), null);
-        if (legacy) {
-            writeJsonFile(file, legacy);
-            return readJsonFile(file, []);
-        }
-    }
-    return readJsonFile(file, []);
-});
+ipcMain.handle('jobs:load', (_, engine) => jobsStore.loadJobs(engine));
 
 ipcMain.handle('shell:openPath', (_, p) => {
     if (p && !fs.existsSync(p)) {

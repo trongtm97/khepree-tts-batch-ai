@@ -1,13 +1,15 @@
 # Khepree TTS Batch AI
 
-Ứng dụng Electron chuyển văn bản thành giọng nói hàng loạt, tối ưu cho **truyện audio**, dùng [VieNeu-TTS](https://github.com/pnnbao97/VieNeu-TTS) (v3 Turbo + v3 Nano).
+Ứng dụng Electron chuyển văn bản thành giọng nói hàng loạt (multi-engine). Core offline: **VieNeu Turbo + Nano**; online: **Edge TTS**. Nhiều engine optional cài vào `userData` — không nằm trong installer mặc định.
 
-## Yêu cầu
+Chi tiết giấy phép bên thứ ba: [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+
+## Yêu cầu (dev)
 
 - Node.js 18+
-- Python 3.10+ với `vieneu` ≥ 3.5.4
+- Python 3.10+ (dev); **end-user installer** mang Python runtime nhúng — không cần cài Python/Node/Git/Conda để chạy **core**.
 
-## Cài đặt
+## Cài đặt (dev)
 
 ```bash
 npm install
@@ -21,58 +23,72 @@ py -3 scripts/download-vieneu-model.py
 npm start
 ```
 
-## Engine
+## Engine matrix
 
-- **VieNeu-TTS v3 Turbo** — ONNX CPU, 48 kHz (CPU mạnh)
-- **VieNeu-TTS v3 Nano** — ONNX CPU, 24 kHz (máy yếu; chất lượng thấp hơn)
-- **Edge TTS** — online, cần mạng
+Không dùng quality star giả. “Phù hợp nhất” = guidance sản phẩm / use-case, không phải điểm chất lượng đo được.
 
-SDK: `vieneu` **≥ 3.5.4**.
+| Engine | Phù hợp nhất | CPU | GPU | Vietnamese | English | Clone | Offline | Optional |
+|--------|--------------|-----|-----|------------|---------|-------|---------|----------|
+| VieNeu Turbo | VI tổng quát / clone | Yes (mạnh) | Optional | Official | Limited | Yes (preset/ref) | Yes | No (bundled) |
+| VieNeu Nano | VI máy yếu | Yes | Optional | Official | Limited | Yes | Yes | No (bundled) |
+| Edge TTS | Online đa ngôn ngữ | Yes | n/a | Yes (service) | Yes | No | No (needs net) | No (bundled client) |
+| Supertonic | VI multilingual CPU (alt) | Yes | Optional | Yes | Yes | Limited | Yes | Yes (weights) |
+| KittenTTS | English nhẹ | Yes | Optional | No | Yes | No | Yes | Yes |
+| Kokoro | English nhẹ | Yes | Optional | No | Yes | No | Yes | Yes |
+| Piper | CPU multi-voice (GPL) | Yes | Optional | Catalog* | Yes | No | Yes | Yes — **license attention** |
+| Chatterbox | EN expressive / clone | Possible | Recommended (Turbo) | No | Yes | Yes | Yes | Yes |
+| Qwen3-TTS 0.6B | Advanced | Possible | Recommended | Not official | Yes | Yes (Base) | Yes | Yes |
+| Spark-TTS 0.5B | Advanced clone / controls | Possible | Recommended | Not official | Yes (zh/en) | Yes | Yes | Yes |
+| GPT-SoVITS | Voice Lab advanced | Possible | Recommended | Not official | Upstream langs | Yes | Yes | Yes (Voice Lab) |
 
-## Giấy phép VieNeu (thương mại)
+\* Piper Vietnamese voices chỉ khi có trong catalog upstream — không invent.
 
-- **Code + model v3 Turbo + preset voices:** [Apache License 2.0](https://github.com/pnnbao97/VieNeu-TTS/blob/main/LICENSE) — được dùng, phân phối và **bán thương mại**.
-- Khi đóng gói/redistribute: giữ bản copy Apache 2.0 + attribution (VieNeu-TTS, MOSS codec).
-- **VieNeu v4** (vieneu.io): proprietary, **không** open-source — không dùng trong app này.
+## Giấy phép (tóm tắt)
+
+- **VieNeu code + v3 weights:** Apache-2.0 — giữ notice khi redistribute.
+- **Piper:** GPLv3 runtime + per-voice `MODEL_CARD` — highlight trước khi cài.
+- **Supertonic:** tách **code (MIT)** và **weights (OpenRAIL)**.
+- **GPT-SoVITS checkpoints:** *License determined by model provider.*
+- Full table: [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## Bản quyền Khepree
 
-App gắn catalog sản phẩm `khepree-tts-batch-ai` trên nền tảng Khepree (trial 1 ngày / tháng 49k / năm 499k VND).
+App gắn catalog `khepree-tts-batch-ai` (trial / tháng / năm). Chi tiết: [`docs/KHEPREE_INTEGRATION.md`](docs/KHEPREE_INTEGRATION.md). Dev mock: `KHEPREE_DEV_MOCK=1`.
 
-Chi tiết: [`docs/KHEPREE_INTEGRATION.md`](docs/KHEPREE_INTEGRATION.md). Dev mock: `KHEPREE_DEV_MOCK=1`.
-
-## Tiền xử lý
-
-```
-Văn bản gốc → tách theo dòng + khoảng lặng (Python) → VieNeu v3 Turbo → WAV
-```
-
-VieNeu v3: tham số `silence_p` (chunk nội bộ, mặc định 0.15s). Pause giữa dòng do app chèn khi ghép audio.
-
-Tuỳ chỉnh trong `models/vieneu/model-config.json`:
-
-| Key | Mặc định | Ý nghĩa |
-|-----|----------|---------|
-| `silence_line_punct` | 0.35s | Xuống dòng có dấu câu |
-| `silence_line_no_punct` | 0.55s | Xuống dòng không dấu câu |
-| `silence_paragraph` | 0.75s | Sau dòng trống |
-| `silence_chunk` | 0.15s | Chunk dài trong một đoạn |
-
-## Build installer (offline — user không tải model)
+## Build installer (core offline)
 
 ```bash
-npm run ensure:models   # tải Turbo + Nano + codec vào models/
-npm run build:win       # hoặc build:mac — tự ensure:models trước khi pack
+npm run ensure:models   # Turbo + Nano + codec → models/vieneu/
+npm run build:win       # hoặc build:mac
 ```
 
-`electron-builder` đóng gói cả thư mục `models/` vào `extraResources`. App packaged bật `HF_HUB_OFFLINE` — không tải HuggingFace lúc chạy.
+`electron-builder` **chỉ** đóng gói `models/vieneu` (+ Python workers + `resources/runtime`). Optional engines/weights cài sau vào `userData` — **không** bundle nhầm cả cây `models/`.
+
+Packaged inference bật `HF_HUB_OFFLINE` cho **VieNeu bundled**. Download optional dùng network env riêng.
+
+## Kiểm thử
+
+```bash
+npm run test:selfcheck
+npm run test:installer-audit   # contract: models/vieneu only, no torch/gradio in core reqs
+```
 
 ## Cấu trúc
 
 ```
 batch.html
-src/batch/          — UI + tiền xử lý truyện
-electron/           — VieNeu engine
-python/tts_worker.py
-models/vieneu/      — v3turbo + v3nano + codec (bundle offline)
+src/batch/                 — UI Batch + engine selector + benchmark AUTO
+electron/                  — registry, pools, IPC, optional packages
+python/tts_worker.py       — VieNeu
+python/edge_tts_worker.py  — Edge
+python/engines/*/worker.py — optional engines
+models/vieneu/             — bundled offline (Turbo + Nano + codec)
+samples/benchmark/         — corpus benchmark cục bộ
 ```
+
+## Docs
+
+- [`docs/MULTI_ENGINE_BASELINE.md`](docs/MULTI_ENGINE_BASELINE.md) — baseline contract
+- [`docs/BENCHMARK.md`](docs/BENCHMARK.md) — local benchmark / AUTO
+- [`docs/engines/`](docs/engines/) — per-engine notes
+- [`docs/RELEASE_QA.md`](docs/RELEASE_QA.md) — final QA snapshot

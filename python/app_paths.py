@@ -46,6 +46,7 @@ def _find_ffprobe() -> str | None:
     candidates = [
         root / "runtime" / "ffmpeg" / "ffprobe.exe",
         root / "runtime" / "win32" / "ffmpeg" / "ffprobe.exe",
+        root / "node_modules" / "ffprobe-static" / "bin" / "win32" / "x64" / "ffprobe.exe",
     ]
     for c in candidates:
         if c.is_file():

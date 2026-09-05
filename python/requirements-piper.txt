@@ -1,0 +1,7 @@
+# Optional Piper runtime (OHF-Voice piper-tts).
+# Installed into userData/runtimes/piper/site-packages via the app install flow.
+# Do NOT add to requirements-bundle.txt / default installer.
+#
+#   pip install --target <userData>/runtimes/piper/site-packages -r python/requirements-piper.txt
+#
+piper-tts>=1.5.0,<2

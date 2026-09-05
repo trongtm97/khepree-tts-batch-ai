@@ -3,6 +3,12 @@ const fs = require('fs');
 const { spawnSync } = require('child_process');
 const { app } = require('electron');
 
+/** Optional override from settings.modelStorageDir (validated). */
+let _modelStorageDir = '';
+
+/** Optional override for isolated Python runtimes (tests / future setting). */
+let _runtimeStorageDir = '';
+
 function isPackaged() {
     return Boolean(app?.isPackaged);
 }
@@ -47,8 +53,160 @@ function getPythonDir() {
     return path.join(getAppRoot(), 'python');
 }
 
-function getModelsDir() {
+/**
+ * Bundled/offline models shipped with the app (VieNeu Turbo+Nano+codec).
+ * Packaged → resources/models; dev → <repo>/models.
+ */
+function getBundledModelsDir() {
     return path.join(getAppRoot(), 'models');
+}
+
+/**
+ * Compatibility for VieNeu / existing workers.
+ * MUST remain the bundled tree — do not point this at userData.
+ */
+function getModelsDir() {
+    return getBundledModelsDir();
+}
+
+/** Roots where optional model downloads must never land. */
+function listForbiddenOptionalRoots() {
+    const roots = [];
+    try {
+        if (process.resourcesPath) roots.push(path.resolve(process.resourcesPath));
+    } catch (_) { /* ignore */ }
+    try {
+        if (app?.getAppPath) roots.push(path.resolve(app.getAppPath()));
+    } catch (_) { /* ignore */ }
+    // Dev source / project root (and packaged app root via getAppRoot).
+    roots.push(path.resolve(path.join(__dirname, '..')));
+    try {
+        roots.push(path.resolve(getAppRoot()));
+    } catch (_) { /* ignore */ }
+    if (process.platform === 'win32') {
+        const pf = process.env.ProgramFiles;
+        const pf86 = process.env['ProgramFiles(x86)'];
+        if (pf) roots.push(path.resolve(pf));
+        if (pf86) roots.push(path.resolve(pf86));
+    } else if (process.platform === 'darwin') {
+        roots.push('/Applications');
+    }
+    return [...new Set(roots.filter(Boolean))];
+}
+
+/**
+ * True if candidate is inside a forbidden install/resources/source tree.
+ * @param {string} candidate
+ * @param {string[]} [forbiddenRoots]
+ */
+function isForbiddenOptionalModelsPath(candidate, forbiddenRoots) {
+    if (!candidate) return true;
+    let resolved;
+    try {
+        resolved = path.resolve(candidate);
+    } catch (_) {
+        return true;
+    }
+    const roots = forbiddenRoots || listForbiddenOptionalRoots();
+    const norm = resolved.toLowerCase();
+    for (const root of roots) {
+        const r = path.resolve(root).toLowerCase();
+        if (norm === r || norm.startsWith(r + path.sep.toLowerCase()) || norm.startsWith(r + '/')) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Validate user-chosen optional model root. Returns absolute path or null if unsafe/empty.
+ */
+function resolveSafeOptionalModelsRoot(customDir) {
+    const raw = String(customDir || '').trim();
+    if (!raw) return null;
+    const resolved = path.resolve(raw);
+    if (isForbiddenOptionalModelsPath(resolved)) return null;
+    return resolved;
+}
+
+/**
+ * Apply settings.modelStorageDir (call from main after load/save settings).
+ * Unsafe values are ignored; default userData/models remains in effect.
+ */
+function setModelStorageDir(customDir) {
+    const safe = resolveSafeOptionalModelsRoot(customDir);
+    _modelStorageDir = safe || '';
+    return _modelStorageDir;
+}
+
+function getConfiguredModelStorageDir() {
+    return _modelStorageDir || '';
+}
+
+/**
+ * Writable root for optional (non-bundled) engine models.
+ * Default: userData/models. Never resourcesPath / Program Files / app source.
+ * @param {string} [customDir] — one-shot override (also validated)
+ */
+function getUserModelsDir(customDir) {
+    const fromArg = resolveSafeOptionalModelsRoot(customDir);
+    if (fromArg) return fromArg;
+    if (_modelStorageDir) return _modelStorageDir;
+    return path.join(app.getPath('userData'), 'models');
+}
+
+function sanitizeModelSubdir(name) {
+    return String(name || 'engine')
+        .replace(/[^a-zA-Z0-9_-]/g, '_')
+        .replace(/_+/g, '_')
+        .replace(/^_|_$/g, '')
+        .slice(0, 64) || 'engine';
+}
+
+/**
+ * Directory for one engine's model files.
+ * Bundled engines → getBundledModelsDir()/subdir
+ * Optional engines → getUserModelsDir()/subdir
+ */
+function getEngineModelDir(engineId) {
+    let entry = null;
+    try {
+        entry = require('./engine-registry.cjs').getEngine(engineId);
+    } catch (_) { /* registry optional during early boot */ }
+
+    const sub = sanitizeModelSubdir(entry?.modelsSubdir || entry?.id || engineId);
+    if (entry?.bundled) {
+        return path.join(getBundledModelsDir(), sub);
+    }
+    // Unknown / optional → user-writable storage only
+    return path.join(getUserModelsDir(), sub);
+}
+
+/**
+ * Writable root for optional isolated Python runtimes (not core bundle).
+ * Default: userData/runtimes. Never resourcesPath / Program Files / repo.
+ */
+function setRuntimeStorageDir(customDir) {
+    const safe = resolveSafeOptionalModelsRoot(customDir);
+    _runtimeStorageDir = safe || '';
+    return _runtimeStorageDir;
+}
+
+function getUserRuntimesDir(customDir) {
+    const fromArg = resolveSafeOptionalModelsRoot(customDir);
+    if (fromArg) return fromArg;
+    if (_runtimeStorageDir) return _runtimeStorageDir;
+    return path.join(app.getPath('userData'), 'runtimes');
+}
+
+function getRuntimeDir(runtimeId) {
+    const id = sanitizeModelSubdir(runtimeId || 'runtime');
+    const root = path.resolve(getUserRuntimesDir());
+    const dir = path.resolve(path.join(root, id));
+    if (dir !== root && !dir.startsWith(root + path.sep)) {
+        throw new Error('Runtime path escaped user runtimes dir');
+    }
+    return dir;
 }
 
 function getWorkerScript(name) {
@@ -103,6 +261,10 @@ function resolveFfmpegBinary(baseName) {
     return null;
 }
 
+/**
+ * Inference worker env. Packaged builds force HF offline so synthesis never
+ * pulls models. Do NOT use this for model downloads — use buildNetworkEnv().
+ */
 function buildWorkerEnv(extra = {}) {
     const env = {
         ...process.env,
@@ -130,11 +292,36 @@ function buildWorkerEnv(extra = {}) {
     }
     if (ffprobe) {
         env.FFPROBE_PATH = ffprobe;
+        const probeDir = path.dirname(ffprobe);
+        if (!ffmpeg || probeDir !== path.dirname(ffmpeg)) {
+            env.PATH = `${probeDir}${path.delimiter}${env.PATH || ''}`;
+        }
     }
     const pyDir = getPythonDir();
     if (fs.existsSync(pyDir)) {
         env.PYTHONPATH = pyDir;
     }
+    return env;
+}
+
+/**
+ * Network context for Model Download Manager (and similar).
+ * Explicitly clears HF/transformers offline flags so downloads can run even
+ * when packaged inference workers stay offline.
+ */
+function buildNetworkEnv(extra = {}) {
+    const env = {
+        ...process.env,
+        KHEPREE_TTS_ROOT: getAppRoot(),
+        PYTHONIOENCODING: 'utf-8',
+        PYTHONUTF8: '1',
+        PYTHONUNBUFFERED: '1',
+        KHEPREE_NETWORK_CONTEXT: '1',
+        ...extra,
+    };
+    delete env.HF_HUB_OFFLINE;
+    delete env.HF_DATASETS_OFFLINE;
+    delete env.TRANSFORMERS_OFFLINE;
     return env;
 }
 
@@ -237,9 +424,21 @@ module.exports = {
     getSamplesDir,
     getPythonDir,
     getModelsDir,
+    getBundledModelsDir,
+    getUserModelsDir,
+    getEngineModelDir,
+    getUserRuntimesDir,
+    getRuntimeDir,
+    setRuntimeStorageDir,
+    setModelStorageDir,
+    getConfiguredModelStorageDir,
+    resolveSafeOptionalModelsRoot,
+    isForbiddenOptionalModelsPath,
+    listForbiddenOptionalRoots,
     getWorkerScript,
     getBundledPythonExe,
     resolveFfmpegBinary,
     buildWorkerEnv,
+    buildNetworkEnv,
     resolvePythonCmd,
 };

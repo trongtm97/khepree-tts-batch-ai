@@ -1,0 +1,7 @@
+# Optional: Kokoro ONNX runtime (CPU).
+#   pip install -r python/requirements-kokoro.txt
+#
+# Windows: install espeak-ng so phonemizer can run (see docs/engines/kokoro.md).
+# Do NOT add Torch. Models download via Electron Model Download Manager
+# into userData/models/kokoro/<variant>/ — never during synthesize.
+kokoro-onnx>=0.4.9

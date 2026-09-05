@@ -58,6 +58,138 @@ export const DEFAULT_SETTINGS = {
 
     chunkAutoOnImport: false,
 
+    selectedBatchEngine: 'vieneu',
+
+    /** Prompt 27 — local language detection + mismatch warnings */
+    languageDetectionEnabled: true,
+    languageMismatchWarnings: true,
+
+    /** Optional models root; empty = userData/models. Never resources/Program Files. */
+    modelStorageDir: '',
+
+    /** Supertonic 3 (optional ONNX) */
+    supertonicVoice: 'M1',
+    supertonicLang: 'vi',
+    supertonicSpeed: 1.05,
+    supertonicSteps: 8,
+
+    /** KittenTTS (optional ONNX) */
+    kittenVoice: 'Bella',
+    kittenVariant: 'mini',
+    kittenSpeed: 1.0,
+
+    /** Kokoro (optional ONNX via kokoro-onnx) */
+    kokoroVoice: 'af_heart',
+    kokoroVariant: 'int8',
+    kokoroSpeed: 1.0,
+
+    /** Piper (optional GPLv3 — not bundled) */
+    piperVoice: 'en_US-lessac-medium',
+    piperVariant: 'en_US-lessac-medium',
+    piperSpeed: 1.0,
+
+    /** Chatterbox (optional isolated PyTorch — Nano + Turbo) */
+    chatterboxRef: '',
+    chatterboxNanoRef: '',
+    chatterboxVariant: 'nano',
+
+    /** Qwen3-TTS 0.6B (optional isolated — CustomVoice + Base) */
+    qwen3Voice: 'Vivian',
+    qwen3Variant: '0.6b-custom',
+    qwen3Lang: 'Auto',
+    qwen3Ref: '',
+    qwen3RefText: '',
+    qwen3Instruct: '',
+
+    /** Spark-TTS 0.5B (optional isolated — clone + speaker controls) */
+    sparkMode: 'clone',
+    sparkLang: 'Chinese',
+    sparkRef: '',
+    sparkRefText: '',
+    sparkGender: 'male',
+    sparkPitch: 'moderate',
+    sparkSpeedLevel: 'moderate',
+
+    /** Local benchmark + AUTO recommender prefs */
+    benchmarkPreferredTask: 'vi-general',
+    benchmarkPreferredLanguage: 'vi',
+    benchmarkPreferredEngine: '',
+
+    /** GPT-SoVITS Voice Lab (inference only — no training) */
+    gptSovitsProfile: '',
+    gptSovitsTextLang: 'zh',
+    gptSovitsRefLang: 'zh',
+    gptSovitsRef: '',
+    gptSovitsRefText: '',
+    gptSovitsGptCkpt: '',
+    gptSovitsSovitsCkpt: '',
+
+    settingsSchemaVersion: 2,
+
+    engineSettings: {
+        vieneu: { voice: '' },
+        v3nano: { voice: '' },
+        edge: {
+            voice: 'vi-VN-HoaiMyNeural',
+            voiceMode: 'vietnamese',
+            rate: 0,
+            pitch: 0,
+            volume: 0,
+        },
+        supertonic: {
+            voice: 'M1',
+            lang: 'vi',
+            speed: 1.05,
+            steps: 8,
+        },
+        kitten: {
+            voice: 'Bella',
+            variant: 'mini',
+            speed: 1.0,
+        },
+        kokoro: {
+            voice: 'af_heart',
+            variant: 'int8',
+            speed: 1.0,
+        },
+        piper: {
+            voice: 'en_US-lessac-medium',
+            variant: 'en_US-lessac-medium',
+            speed: 1.0,
+        },
+        chatterbox: {
+            voice: '',
+            ref: '',
+            variant: 'nano',
+        },
+        qwen3: {
+            voice: 'Vivian',
+            variant: '0.6b-custom',
+            lang: 'Auto',
+            ref: '',
+            refText: '',
+            instruct: '',
+        },
+        spark: {
+            mode: 'clone',
+            lang: 'Chinese',
+            ref: '',
+            refText: '',
+            gender: 'male',
+            pitch: 'moderate',
+            speedLevel: 'moderate',
+        },
+        'gpt-sovits': {
+            profile: '',
+            textLang: 'zh',
+            refLang: 'zh',
+            ref: '',
+            refText: '',
+            gptCkpt: '',
+            sovitsCkpt: '',
+        },
+    },
+
 };
 
 
@@ -105,6 +237,10 @@ const VIENEU_FIELD_MAP = [
     ['set-stripHash', 'stripHash', 'checkbox'],
 
     ['set-useSeaG2p', 'useSeaG2p', 'checkbox'],
+
+    ['set-languageDetectionEnabled', 'languageDetectionEnabled', 'checkbox'],
+
+    ['set-languageMismatchWarnings', 'languageMismatchWarnings', 'checkbox'],
 
 ];
 

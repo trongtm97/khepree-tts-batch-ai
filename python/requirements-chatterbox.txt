@@ -1,0 +1,6 @@
+# Optional: Chatterbox family (Nano now; Turbo later shares this env).
+# Installed into userData/runtimes/chatterbox/site-packages — NEVER core bundle.
+#
+#   pip install --target <userData>/runtimes/chatterbox/site-packages -r python/requirements-chatterbox.txt
+#
+chatterbox-tts>=0.1.4

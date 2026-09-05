@@ -1,21 +1,14 @@
 /**
- * Self-check: Turbo/Nano jobs storage must stay isolated.
+ * Self-check: job storage isolation + legacy + generic + corrupt JSON (P08).
  * Run: node scripts/jobs-isolation.selfcheck.cjs
  */
+const assert = require('assert');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { createJobsStore, sanitizeEngineId } = require('../electron/jobs-store.cjs');
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'jobs-iso-'));
-const JOBS_VIENEU = path.join(tmp, 'tts-jobs-vieneu.json');
-const JOBS_NANO = path.join(tmp, 'tts-jobs-v3nano.json');
-const JOBS_LEGACY = path.join(tmp, 'tts-jobs.json');
-
-function jobsFileForEngine(engine) {
-    if (engine === 'edge') return path.join(tmp, 'tts-jobs-edge.json');
-    if (engine === 'v3nano') return JOBS_NANO;
-    return JOBS_VIENEU;
-}
 
 function readJsonFile(filePath, fallback) {
     try {
@@ -30,59 +23,54 @@ function writeJsonFile(filePath, value) {
     fs.writeFileSync(filePath, JSON.stringify(value || [], null, 2), 'utf8');
 }
 
-/** Current (buggy) load: legacy seeds BOTH non-edge engines */
-function loadJobsBuggy(engine) {
-    const legacy = readJsonFile(JOBS_LEGACY, null);
-    const file = jobsFileForEngine(engine);
-    if (legacy && !fs.existsSync(file) && engine !== 'edge') {
-        writeJsonFile(file, legacy);
-        return legacy;
-    }
-    return readJsonFile(file, []);
-}
+const store = createJobsStore(tmp, { readJsonFile, writeJsonFile });
 
-/** Fixed load: legacy only seeds turbo (vieneu) */
-function loadJobsFixed(engine) {
-    const file = jobsFileForEngine(engine);
-    if (!fs.existsSync(file)) {
-        if (engine === 'vieneu') {
-            const legacy = readJsonFile(JOBS_LEGACY, null);
-            if (legacy) {
-                writeJsonFile(file, legacy);
-                return JSON.parse(JSON.stringify(legacy));
-            }
-        }
-        return [];
-    }
-    return readJsonFile(file, []);
-}
+// sanitize
+assert.strictEqual(sanitizeEngineId('vieneu'), 'vieneu');
+assert.strictEqual(sanitizeEngineId('My Engine!!'), 'My_Engine');
+assert.ok(sanitizeEngineId('../../../etc').indexOf('..') < 0);
 
-function saveJobs(engine, jobs) {
-    writeJsonFile(jobsFileForEngine(engine), jobs);
-}
+// --- legacy tts-jobs.json only seeds vieneu ---
+writeJsonFile(path.join(tmp, 'tts-jobs.json'), [{ id: 'L1', text: 'legacy-prompt' }]);
+const turbo1 = store.loadJobs('vieneu');
+const nano1 = store.loadJobs('v3nano');
+assert.strictEqual(turbo1.length, 1);
+assert.strictEqual(turbo1[0].text, 'legacy-prompt');
+assert.strictEqual(nano1.length, 0);
+assert.ok(fs.existsSync(path.join(tmp, 'tts-jobs-vieneu.json')));
+assert.ok(fs.existsSync(path.join(tmp, 'tts-jobs.json')), 'legacy file kept');
 
-// --- Test 1: legacy must not seed nano ---
-writeJsonFile(JOBS_LEGACY, [{ id: 'L1', text: 'legacy-prompt' }]);
-const turbo1 = loadJobsFixed('vieneu');
-const nano1 = loadJobsFixed('v3nano');
-console.assert(turbo1.length === 1 && turbo1[0].text === 'legacy-prompt', 'turbo gets legacy');
-console.assert(nano1.length === 0, 'nano must NOT get legacy');
+// --- isolation ---
+store.saveJobs('vieneu', [...turbo1, { id: 'T2', text: 'turbo-only' }]);
+assert.strictEqual(store.loadJobs('vieneu').length, 2);
+assert.strictEqual(store.loadJobs('v3nano').length, 0);
 
-// --- Test 2: add on turbo must not appear on nano ---
-const turboJobs = [...turbo1, { id: 'T2', text: 'turbo-only' }];
-saveJobs('vieneu', turboJobs);
-const nanoAfter = loadJobsFixed('v3nano');
-const turboAfter = loadJobsFixed('vieneu');
-console.assert(turboAfter.length === 2, 'turbo has 2');
-console.assert(nanoAfter.length === 0, 'nano still empty after turbo save');
+// --- direct legacy filenames ---
+writeJsonFile(path.join(tmp, 'tts-jobs-v3nano.json'), [{ id: 'N1', text: 'nano-legacy' }]);
+writeJsonFile(path.join(tmp, 'tts-jobs-edge.json'), [{ id: 'E1', text: 'edge-legacy' }]);
+assert.strictEqual(store.loadJobs('v3nano')[0].text, 'nano-legacy');
+assert.strictEqual(store.loadJobs('edge')[0].text, 'edge-legacy');
 
-// --- Test 3: demonstrate buggy behavior would fail ---
-fs.rmSync(JOBS_VIENEU, { force: true });
-fs.rmSync(JOBS_NANO, { force: true });
-const buggyTurbo = loadJobsBuggy('vieneu');
-const buggyNano = loadJobsBuggy('v3nano');
-console.assert(buggyTurbo.length === 1 && buggyNano.length === 1, 'buggy path seeds both');
-console.assert(buggyTurbo[0].text === buggyNano[0].text, 'buggy path duplicates text');
+// --- restart: reload same store ---
+const store2 = createJobsStore(tmp, { readJsonFile, writeJsonFile });
+assert.strictEqual(store2.loadJobs('vieneu').length, 2);
+assert.strictEqual(store2.loadJobs('edge')[0].text, 'edge-legacy');
+
+// --- fake/new generic engine ---
+store.saveJobs('piper-test', [{ id: 'P1', text: 'piper' }]);
+assert.ok(fs.existsSync(path.join(tmp, 'tts-jobs-piper-test.json')));
+assert.strictEqual(store.loadJobs('piper-test')[0].text, 'piper');
+assert.strictEqual(store.loadJobs('vieneu').length, 2, 'no cross-leak');
+
+// --- corrupt JSON → empty, no throw ---
+fs.writeFileSync(path.join(tmp, 'tts-jobs-edge.json'), '{not-json', 'utf8');
+assert.deepStrictEqual(store.loadJobs('edge'), []);
+
+// --- interim rename file still migrates once ---
+fs.rmSync(path.join(tmp, 'tts-jobs-v3nano.json'), { force: true });
+writeJsonFile(path.join(tmp, 'tts-jobs-vieneu-nano.json'), [{ id: 'N2', text: 'interim' }]);
+assert.strictEqual(store.loadJobs('v3nano')[0].text, 'interim');
+assert.ok(fs.existsSync(path.join(tmp, 'tts-jobs-vieneu-nano.json')), 'interim kept');
 
 fs.rmSync(tmp, { recursive: true, force: true });
 console.log('jobs-isolation.selfcheck: ok');

@@ -1,0 +1,6 @@
+# Optional: KittenTTS Python package (official wheel — not on PyPI).
+# Install into core/dev Python after onnxruntime is present:
+#   pip install https://github.com/KittenML/KittenTTS/releases/download/0.8.1/kittentts-0.8.1-py3-none-any.whl
+#
+# Do NOT add Torch. Models download via Electron Model Download Manager
+# into userData/models/kitten/<variant>/ — never during synthesize.

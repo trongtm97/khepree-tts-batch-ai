@@ -45,13 +45,7 @@
             <nav class="vb-nav">
                 <div class="vb-nav-group">Batch</div>
                 <button type="button" class="vb-nav-item active" data-tab="batch">
-                    <span class="vb-nav-icon"><svg class="vb-ico"><use href="#ico-batch"/></svg></span><span class="vb-nav-label">VieNeu Turbo</span>
-                </button>
-                <button type="button" class="vb-nav-item" data-tab="nano">
-                    <span class="vb-nav-icon"><svg class="vb-ico"><use href="#ico-zap"/></svg></span><span class="vb-nav-label">VieNeu Nano</span>
-                </button>
-                <button type="button" class="vb-nav-item" data-tab="edge">
-                    <span class="vb-nav-icon"><svg class="vb-ico"><use href="#ico-cloud"/></svg></span><span class="vb-nav-label">Edge TTS</span>
+                    <span class="vb-nav-icon"><svg class="vb-ico"><use href="#ico-batch"/></svg></span><span class="vb-nav-label">Batch</span>
                 </button>
                 <div class="vb-nav-divider" role="separator"></div>
                 <button type="button" class="vb-nav-item" data-tab="khepree">
@@ -85,14 +79,48 @@
 
         <main class="vb-main">
             <section id="tab-batch" class="vb-page active">
-                <div class="vb-batch" id="batch-workspace">
+                <div id="engine-selector" class="vb-engine-selector" hidden>
                     <header class="vb-sticky-header">
                         <div class="vb-header-row">
                             <div>
-                                <h1 class="vb-page-title">VieNeu Turbo Batch</h1>
-                                <p class="vb-page-sub">48 kHz · Offline · CPU mạnh</p>
+                                <h1 class="vb-page-title">Chọn engine TTS</h1>
+                                <p class="vb-page-sub">Một workspace Batch — chọn engine phù hợp máy của bạn</p>
+                            </div>
+                            <div class="vb-header-actions vb-benchmark-actions">
+                                <label class="vb-field vb-bench-task">
+                                    <span class="vb-bench-task-label">Tác vụ AUTO</span>
+                                    <select id="sel-benchmark-task"></select>
+                                </label>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm" id="btn-benchmark-run">Đo trên máy của bạn</button>
+                                <button type="button" class="vb-btn vb-btn-primary vb-btn-sm" id="btn-benchmark-auto">AUTO đề xuất</button>
+                            </div>
+                        </div>
+                        <p id="benchmark-status" class="vb-benchmark-status" hidden></p>
+                        <div id="benchmark-auto-panel" class="vb-benchmark-auto-panel" hidden></div>
+                    </header>
+                    <div id="engine-selector-current" class="vb-engine-now vb-engine-now-panel" hidden></div>
+                    <div class="vb-engine-toolbar">
+                        <div id="engine-filters" class="vb-engine-filters" role="toolbar" aria-label="Lọc engine"></div>
+                        <label class="vb-engine-search">
+                            <span class="vb-visually-hidden">Tìm model</span>
+                            <input type="search" id="engine-selector-search" placeholder="Tìm: tiếng Việt, clone, máy yếu…" autocomplete="off" />
+                        </label>
+                    </div>
+                    <div id="engine-selector-grid" class="vb-engine-sections" role="region" aria-label="Danh sách engine"></div>
+                </div>
+
+                <div class="vb-batch" id="batch-workspace" hidden>
+                    <header class="vb-sticky-header">
+                        <div class="vb-header-row">
+                            <div class="vb-engine-now">
+                                <div class="vb-engine-now-label">ENGINE ĐANG DÙNG</div>
+                                <h1 class="vb-page-title engine-now-name">VieNeu Turbo</h1>
+                                <p class="vb-page-sub engine-now-sub">48 kHz · Offline · CPU mạnh</p>
+                                <div class="engine-now-badges vb-engine-badges"></div>
+                                <p class="engine-now-compat vb-engine-compat" hidden></p>
                             </div>
                             <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-change-engine">Đổi engine</button>
                                 <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
                                 <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
                                 <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
@@ -194,17 +222,19 @@
                         </div>
                     </footer>
                 </div>
-            </section>
 
-            <section id="tab-nano" class="vb-page">
-                <div class="vb-batch" id="nano-workspace">
+                <div class="vb-batch" id="nano-workspace" hidden>
                     <header class="vb-sticky-header">
                         <div class="vb-header-row">
-                            <div>
-                                <h1 class="vb-page-title">VieNeu Nano Batch</h1>
-                                <p class="vb-page-sub">24 kHz · Offline · máy yếu</p>
+                            <div class="vb-engine-now">
+                                <div class="vb-engine-now-label">ENGINE ĐANG DÙNG</div>
+                                <h1 class="vb-page-title engine-now-name">VieNeu Nano</h1>
+                                <p class="vb-page-sub engine-now-sub">24 kHz · Offline · máy yếu</p>
+                                <div class="engine-now-badges vb-engine-badges"></div>
+                                <p class="engine-now-compat vb-engine-compat" hidden></p>
                             </div>
                             <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-change-engine">Đổi engine</button>
                                 <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
                                 <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
                                 <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
@@ -306,17 +336,19 @@
                         </div>
                     </footer>
                 </div>
-            </section>
 
-            <section id="tab-edge" class="vb-page">
-                <div class="vb-batch" id="edge-workspace">
+                <div class="vb-batch" id="edge-workspace" hidden>
                     <header class="vb-sticky-header">
                         <div class="vb-header-row">
-                            <div>
-                                <h1 class="vb-page-title">Edge TTS Batch</h1>
-                                <p class="vb-page-sub">Online · cần mạng · sea-g2p cho tiếng Việt</p>
+                            <div class="vb-engine-now">
+                                <div class="vb-engine-now-label">ENGINE ĐANG DÙNG</div>
+                                <h1 class="vb-page-title engine-now-name">Edge TTS</h1>
+                                <p class="vb-page-sub engine-now-sub">Online · cần mạng · đa ngôn ngữ</p>
+                                <div class="engine-now-badges vb-engine-badges"></div>
+                                <p class="engine-now-compat vb-engine-compat" hidden></p>
                             </div>
                             <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-change-engine">Đổi engine</button>
                                 <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
                                 <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
                                 <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
@@ -421,9 +453,951 @@
                         </div>
                     </footer>
                 </div>
-            </section>
 
-            <section id="tab-settings" class="vb-page">
+                <div class="vb-batch" id="supertonic-workspace" hidden>
+                    <header class="vb-sticky-header">
+                        <div class="vb-header-row">
+                            <div class="vb-engine-now">
+                                <div class="vb-engine-now-label">ENGINE ĐANG DÙNG</div>
+                                <h1 class="vb-page-title engine-now-name">Supertonic 3</h1>
+                                <p class="vb-page-sub engine-now-sub">Đa ngôn ngữ · Nhẹ · Chạy CPU</p>
+                                <div class="engine-now-badges vb-engine-badges"></div>
+                                <p class="engine-now-compat vb-engine-compat" hidden></p>
+                                <p class="vb-engine-license-line">Code: MIT · Model: OpenRAIL (Supertone/supertonic-3)</p>
+                            </div>
+                            <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-change-engine">Đổi engine</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-download-template-inline" title="Tải file Excel mẫu">Tải mẫu Excel</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-export-jobs">Xuất JSON</button>
+                                <span class="vb-status-chip engine-status-badge">Đang khởi tạo</span>
+                            </div>
+                        </div>
+                        <div class="vb-config-panel">
+                            <div class="vb-field">
+                                <label>Ngôn ngữ</label>
+                                <select class="sel-lang"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Giọng (preset)</label>
+                                <select class="sel-voice"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Tốc độ</label>
+                                <input type="range" class="inp-speed-range" min="0.7" max="2" step="0.05" value="1.05">
+                                <div class="vb-range-val speed-val">1.05×</div>
+                            </div>
+                            <div class="vb-field">
+                                <label>Chất lượng (steps)</label>
+                                <input type="range" class="inp-steps-range" min="5" max="12" step="1" value="8">
+                                <div class="vb-range-val steps-val">8</div>
+                            </div>
+                            <div class="vb-field vb-field-hint" style="flex:1;min-width:180px">
+                                <label>Ghi chú</label>
+                                <span class="vb-hint">Preset M1–M5 / F1–F5 · không zero-shot clone local · không sea-g2p</span>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="vb-table-toolbar">
+                        <div class="vb-stats-inline">
+                            <span>Tổng <strong class="stat-total">0</strong></span>
+                            <span class="c-wait">Chờ <strong class="stat-waiting">0</strong></span>
+                            <span class="c-done">Xong <strong class="stat-done">0</strong></span>
+                            <span class="c-fail">Lỗi <strong class="stat-error">0</strong></span>
+                        </div>
+                        <div class="vb-search"><input type="search" class="inp-search" placeholder="Tìm tác vụ…"></div>
+                        <div class="vb-filter">
+                            <select class="sel-filter-status">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="pending">Chờ</option>
+                                <option value="running">Đang chạy</option>
+                                <option value="done">Hoàn thành</option>
+                                <option value="error">Lỗi</option>
+                            </select>
+                        </div>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-add-row">+ Thêm dòng</button>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-delete-selected">Xóa đã chọn</button>
+                        <button type="button" class="vb-btn vb-btn-danger vb-btn-sm btn-clear-all">Xóa tất cả</button>
+                        <span class="page-info vb-task-count"></span>
+                    </div>
+
+                    <div class="vb-workspace-body">
+                    <div class="vb-grid-wrap grid-drop-zone">
+                        <table class="vb-grid">
+                            <thead>
+                                <tr>
+                                    <th class="col-cb"><input type="checkbox" class="check-all" title="Chọn tất cả"></th>
+                                    <th class="col-stt sortable" data-sort="order">STT</th>
+                                    <th class="col-grp sortable" data-sort="group">Nhóm</th>
+                                    <th class="col-file sortable" data-sort="name">Tên file</th>
+                                    <th class="col-text">Nội dung văn bản</th>
+                                    <th class="col-st sortable" data-sort="status">Trạng thái</th>
+                                    <th class="col-prog">Tiến độ</th>
+                                    <th class="col-out">Kết quả</th>
+                                    <th class="col-act">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="grid-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="vb-console log-panel">
+                        <div class="vb-console-header btn-toggle-log">
+                            <span>Console</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-clear-log" style="margin-left:auto">Xóa</button>
+                        </div>
+                        <div class="vb-console-body log-body"></div>
+                    </div>
+                    </div>
+
+                    <footer class="vb-footer">
+                        <div class="vb-footer-meta">
+                            <span class="output-dir-label tab-output-dir-label" title="Thư mục xuất">Tải xuống</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-tab-outputDir">Đổi thư mục</button>
+                        </div>
+                        <div class="vb-footer-actions">
+                            <button type="button" class="vb-btn vb-btn-primary vb-btn-lg btn-run">Bắt đầu batch</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-pause" disabled>Tạm dừng</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-resume" disabled>Tiếp tục</button>
+                            <button type="button" class="vb-btn vb-btn-danger btn-stop" style="display:none">Dừng</button>
+                            <button type="button" class="vb-btn vb-btn-ghost btn-run-errors">Chạy lại lỗi</button>
+                        </div>
+                    </footer>
+                </div>
+
+                <div class="vb-batch" id="kitten-workspace" hidden>
+                    <header class="vb-sticky-header">
+                        <div class="vb-header-row">
+                            <div class="vb-engine-now">
+                                <div class="vb-engine-now-label">ENGINE ĐANG DÙNG</div>
+                                <h1 class="vb-page-title engine-now-name">KittenTTS</h1>
+                                <p class="vb-page-sub engine-now-sub">Siêu nhẹ · CPU · Dành cho máy phổ thông</p>
+                                <div class="engine-now-badges vb-engine-badges"></div>
+                                <p class="engine-now-compat vb-engine-compat" hidden></p>
+                                <p class="vb-engine-license-line">Code: Apache-2.0 · Model: Apache-2.0 (KittenML) · English only</p>
+                            </div>
+                            <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-change-engine">Đổi engine</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-install-variant">Cài variant</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-download-template-inline" title="Tải file Excel mẫu">Tải mẫu Excel</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-export-jobs">Xuất JSON</button>
+                                <span class="vb-status-chip engine-status-badge">Đang khởi tạo</span>
+                            </div>
+                        </div>
+                        <div class="vb-config-panel">
+                            <div class="vb-field">
+                                <label>Model variant</label>
+                                <select class="sel-variant"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Giọng (preset)</label>
+                                <select class="sel-voice"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Tốc độ</label>
+                                <input type="range" class="inp-speed-range" min="0.5" max="2" step="0.05" value="1">
+                                <div class="vb-range-val speed-val">1.00×</div>
+                            </div>
+                            <div class="vb-field vb-field-hint" style="flex:1;min-width:180px">
+                                <label>Ghi chú</label>
+                                <span class="vb-hint">English · Bella–Leo · không clone · cài riêng từng variant · không sea-g2p</span>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="vb-table-toolbar">
+                        <div class="vb-stats-inline">
+                            <span>Tổng <strong class="stat-total">0</strong></span>
+                            <span class="c-wait">Chờ <strong class="stat-waiting">0</strong></span>
+                            <span class="c-done">Xong <strong class="stat-done">0</strong></span>
+                            <span class="c-fail">Lỗi <strong class="stat-error">0</strong></span>
+                        </div>
+                        <div class="vb-search"><input type="search" class="inp-search" placeholder="Tìm tác vụ…"></div>
+                        <div class="vb-filter">
+                            <select class="sel-filter-status">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="pending">Chờ</option>
+                                <option value="running">Đang chạy</option>
+                                <option value="done">Hoàn thành</option>
+                                <option value="error">Lỗi</option>
+                            </select>
+                        </div>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-add-row">+ Thêm dòng</button>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-delete-selected">Xóa đã chọn</button>
+                        <button type="button" class="vb-btn vb-btn-danger vb-btn-sm btn-clear-all">Xóa tất cả</button>
+                        <span class="page-info vb-task-count"></span>
+                    </div>
+
+                    <div class="vb-workspace-body">
+                    <div class="vb-grid-wrap grid-drop-zone">
+                        <table class="vb-grid">
+                            <thead>
+                                <tr>
+                                    <th class="col-cb"><input type="checkbox" class="check-all" title="Chọn tất cả"></th>
+                                    <th class="col-stt sortable" data-sort="order">STT</th>
+                                    <th class="col-grp sortable" data-sort="group">Nhóm</th>
+                                    <th class="col-file sortable" data-sort="name">Tên file</th>
+                                    <th class="col-text">Nội dung văn bản</th>
+                                    <th class="col-st sortable" data-sort="status">Trạng thái</th>
+                                    <th class="col-prog">Tiến độ</th>
+                                    <th class="col-out">Kết quả</th>
+                                    <th class="col-act">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="grid-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="vb-console log-panel">
+                        <div class="vb-console-header btn-toggle-log">
+                            <span>Console</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-clear-log" style="margin-left:auto">Xóa</button>
+                        </div>
+                        <div class="vb-console-body log-body"></div>
+                    </div>
+                    </div>
+
+                    <footer class="vb-footer">
+                        <div class="vb-footer-meta">
+                            <span class="output-dir-label tab-output-dir-label" title="Thư mục xuất">Tải xuống</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-tab-outputDir">Đổi thư mục</button>
+                        </div>
+                        <div class="vb-footer-actions">
+                            <button type="button" class="vb-btn vb-btn-primary vb-btn-lg btn-run">Bắt đầu batch</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-pause" disabled>Tạm dừng</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-resume" disabled>Tiếp tục</button>
+                            <button type="button" class="vb-btn vb-btn-danger btn-stop" style="display:none">Dừng</button>
+                            <button type="button" class="vb-btn vb-btn-ghost btn-run-errors">Chạy lại lỗi</button>
+                        </div>
+                    </footer>
+                </div>
+
+                <div class="vb-batch" id="kokoro-workspace" hidden>
+                    <header class="vb-sticky-header">
+                        <div class="vb-header-row">
+                            <div class="vb-engine-now">
+                                <div class="vb-engine-now-label">ENGINE ĐANG DÙNG</div>
+                                <h1 class="vb-page-title engine-now-name">Kokoro</h1>
+                                <p class="vb-page-sub engine-now-sub">English nhanh · Nhẹ · Local</p>
+                                <div class="engine-now-badges vb-engine-badges"></div>
+                                <p class="engine-now-compat vb-engine-compat" hidden></p>
+                                <p class="vb-engine-license-line">Code: MIT (kokoro-onnx) · Model: Apache-2.0 (Kokoro-82M) · English focus</p>
+                            </div>
+                            <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-change-engine">Đổi engine</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-install-variant">Cài variant</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-download-template-inline" title="Tải file Excel mẫu">Tải mẫu Excel</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-export-jobs">Xuất JSON</button>
+                                <span class="vb-status-chip engine-status-badge">Đang khởi tạo</span>
+                            </div>
+                        </div>
+                        <div class="vb-config-panel">
+                            <div class="vb-field">
+                                <label>Model variant</label>
+                                <select class="sel-variant"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Giọng (preset)</label>
+                                <select class="sel-voice"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Tốc độ</label>
+                                <input type="range" class="inp-speed-range" min="0.5" max="2" step="0.05" value="1">
+                                <div class="vb-range-val speed-val">1.00×</div>
+                            </div>
+                            <div class="vb-field vb-field-hint" style="flex:1;min-width:180px">
+                                <label>Ghi chú</label>
+                                <span class="vb-hint">English · ONNX CPU · int8 mặc định · không clone · không tải khi Generate</span>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="vb-table-toolbar">
+                        <div class="vb-stats-inline">
+                            <span>Tổng <strong class="stat-total">0</strong></span>
+                            <span class="c-wait">Chờ <strong class="stat-waiting">0</strong></span>
+                            <span class="c-done">Xong <strong class="stat-done">0</strong></span>
+                            <span class="c-fail">Lỗi <strong class="stat-error">0</strong></span>
+                        </div>
+                        <div class="vb-search"><input type="search" class="inp-search" placeholder="Tìm tác vụ…"></div>
+                        <div class="vb-filter">
+                            <select class="sel-filter-status">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="pending">Chờ</option>
+                                <option value="running">Đang chạy</option>
+                                <option value="done">Hoàn thành</option>
+                                <option value="error">Lỗi</option>
+                            </select>
+                        </div>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-add-row">+ Thêm dòng</button>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-delete-selected">Xóa đã chọn</button>
+                        <button type="button" class="vb-btn vb-btn-danger vb-btn-sm btn-clear-all">Xóa tất cả</button>
+                        <span class="page-info vb-task-count"></span>
+                    </div>
+
+                    <div class="vb-workspace-body">
+                    <div class="vb-grid-wrap grid-drop-zone">
+                        <table class="vb-grid">
+                            <thead>
+                                <tr>
+                                    <th class="col-cb"><input type="checkbox" class="check-all" title="Chọn tất cả"></th>
+                                    <th class="col-stt sortable" data-sort="order">STT</th>
+                                    <th class="col-grp sortable" data-sort="group">Nhóm</th>
+                                    <th class="col-file sortable" data-sort="name">Tên file</th>
+                                    <th class="col-text">Nội dung văn bản</th>
+                                    <th class="col-st sortable" data-sort="status">Trạng thái</th>
+                                    <th class="col-prog">Tiến độ</th>
+                                    <th class="col-out">Kết quả</th>
+                                    <th class="col-act">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="grid-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="vb-console log-panel">
+                        <div class="vb-console-header btn-toggle-log">
+                            <span>Console</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-clear-log" style="margin-left:auto">Xóa</button>
+                        </div>
+                        <div class="vb-console-body log-body"></div>
+                    </div>
+                    </div>
+
+                    <footer class="vb-footer">
+                        <div class="vb-footer-meta">
+                            <span class="output-dir-label tab-output-dir-label" title="Thư mục xuất">Tải xuống</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-tab-outputDir">Đổi thư mục</button>
+                        </div>
+                        <div class="vb-footer-actions">
+                            <button type="button" class="vb-btn vb-btn-primary vb-btn-lg btn-run">Bắt đầu batch</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-pause" disabled>Tạm dừng</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-resume" disabled>Tiếp tục</button>
+                            <button type="button" class="vb-btn vb-btn-danger btn-stop" style="display:none">Dừng</button>
+                            <button type="button" class="vb-btn vb-btn-ghost btn-run-errors">Chạy lại lỗi</button>
+                        </div>
+                    </footer>
+                </div>
+
+                <div class="vb-batch" id="piper-workspace" hidden>
+                    <header class="vb-sticky-header">
+                        <div class="vb-header-row">
+                            <div class="vb-engine-now">
+                                <div class="vb-engine-now-label">ENGINE ĐANG DÙNG</div>
+                                <h1 class="vb-page-title engine-now-name">Piper</h1>
+                                <p class="vb-page-sub engine-now-sub">CPU cực nhẹ · Offline · Ổn định</p>
+                                <div class="engine-now-badges vb-engine-badges"></div>
+                                <p class="engine-now-compat vb-engine-compat" hidden></p>
+                                <p class="vb-engine-license-line">Optional · Runtime: GPLv3 (OHF-Voice) · Voice: MODEL_CARD riêng · không bundle installer</p>
+                            </div>
+                            <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-change-engine">Đổi engine</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-install-variant">Cài variant</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-download-template-inline" title="Tải file Excel mẫu">Tải mẫu Excel</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-export-jobs">Xuất JSON</button>
+                                <span class="vb-status-chip engine-status-badge">Đang khởi tạo</span>
+                            </div>
+                        </div>
+                        <div class="vb-config-panel">
+                            <div class="vb-field">
+                                <label>Voice (catalog)</label>
+                                <select class="sel-variant"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Giọng đang dùng</label>
+                                <select class="sel-voice"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Tốc độ</label>
+                                <input type="range" class="inp-speed-range" min="0.5" max="2" step="0.05" value="1">
+                                <div class="vb-range-val speed-val">1.00×</div>
+                            </div>
+                            <div class="vb-field vb-field-hint" style="flex:1;min-width:180px">
+                                <label>Giấy phép</label>
+                                <span class="vb-hint voice-license-hint">Xem giấy phép trước khi cài</span>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="vb-table-toolbar">
+                        <div class="vb-stats-inline">
+                            <span>Tổng <strong class="stat-total">0</strong></span>
+                            <span class="c-wait">Chờ <strong class="stat-waiting">0</strong></span>
+                            <span class="c-done">Xong <strong class="stat-done">0</strong></span>
+                            <span class="c-fail">Lỗi <strong class="stat-error">0</strong></span>
+                        </div>
+                        <div class="vb-search"><input type="search" class="inp-search" placeholder="Tìm tác vụ…"></div>
+                        <div class="vb-filter">
+                            <select class="sel-filter-status">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="pending">Chờ</option>
+                                <option value="running">Đang chạy</option>
+                                <option value="done">Hoàn thành</option>
+                                <option value="error">Lỗi</option>
+                            </select>
+                        </div>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-add-row">+ Thêm dòng</button>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-delete-selected">Xóa đã chọn</button>
+                        <button type="button" class="vb-btn vb-btn-danger vb-btn-sm btn-clear-all">Xóa tất cả</button>
+                        <span class="page-info vb-task-count"></span>
+                    </div>
+
+                    <div class="vb-workspace-body">
+                    <div class="vb-grid-wrap grid-drop-zone">
+                        <table class="vb-grid">
+                            <thead>
+                                <tr>
+                                    <th class="col-cb"><input type="checkbox" class="check-all" title="Chọn tất cả"></th>
+                                    <th class="col-stt sortable" data-sort="order">STT</th>
+                                    <th class="col-grp sortable" data-sort="group">Nhóm</th>
+                                    <th class="col-file sortable" data-sort="name">Tên file</th>
+                                    <th class="col-text">Nội dung văn bản</th>
+                                    <th class="col-st sortable" data-sort="status">Trạng thái</th>
+                                    <th class="col-prog">Tiến độ</th>
+                                    <th class="col-out">Kết quả</th>
+                                    <th class="col-act">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="grid-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="vb-console log-panel">
+                        <div class="vb-console-header btn-toggle-log">
+                            <span>Console</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-clear-log" style="margin-left:auto">Xóa</button>
+                        </div>
+                        <div class="vb-console-body log-body"></div>
+                    </div>
+                    </div>
+
+                    <footer class="vb-footer">
+                        <div class="vb-footer-meta">
+                            <span class="output-dir-label tab-output-dir-label" title="Thư mục xuất">Tải xuống</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-tab-outputDir">Đổi thư mục</button>
+                        </div>
+                        <div class="vb-footer-actions">
+                            <button type="button" class="vb-btn vb-btn-primary vb-btn-lg btn-run">Bắt đầu batch</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-pause" disabled>Tạm dừng</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-resume" disabled>Tiếp tục</button>
+                            <button type="button" class="vb-btn vb-btn-danger btn-stop" style="display:none">Dừng</button>
+                            <button type="button" class="vb-btn vb-btn-ghost btn-run-errors">Chạy lại lỗi</button>
+                        </div>
+                    </footer>
+                </div>
+
+                <div class="vb-batch" id="chatterbox-workspace" hidden>
+                    <header class="vb-sticky-header">
+                        <div class="vb-header-row">
+                            <div class="vb-engine-now">
+                                <div class="vb-engine-now-label">ENGINE ĐANG DÙNG</div>
+                                <h1 class="vb-page-title engine-now-name">Chatterbox</h1>
+                                <p class="vb-page-sub engine-now-sub">English biểu cảm · CPU-friendly</p>
+                                <div class="engine-now-badges vb-engine-badges"></div>
+                                <p class="engine-now-compat vb-engine-compat" hidden></p>
+                                <p class="vb-engine-license-line">Optional · Isolated PyTorch · MIT (Resemble) · English only · Nano + Turbo · không bundle core</p>
+                            </div>
+                            <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-change-engine">Đổi engine</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-install-variant">Cài variant</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-download-template-inline" title="Tải file Excel mẫu">Tải mẫu Excel</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-export-jobs">Xuất JSON</button>
+                                <span class="vb-status-chip engine-status-badge">Đang khởi tạo</span>
+                            </div>
+                        </div>
+                        <div class="vb-config-panel">
+                            <div class="vb-field">
+                                <label>Variant</label>
+                                <select class="sel-variant"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Giọng</label>
+                                <select class="sel-voice"></select>
+                            </div>
+                            <div class="vb-field" style="flex:1.2;min-width:220px">
+                                <label>Reference (optional clone)</label>
+                                <div style="display:flex;gap:6px;align-items:center">
+                                    <input type="text" class="inp-ref-wav" placeholder="File local WAV/MP3…" style="flex:1">
+                                    <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-ref-wav">Chọn</button>
+                                </div>
+                            </div>
+                            <div class="vb-field" style="flex:2;min-width:260px">
+                                <label>Expression tags (official)</label>
+                                <div class="expression-tag-helper" style="display:flex;flex-wrap:wrap;gap:4px"></div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="vb-table-toolbar">
+                        <div class="vb-stats-inline">
+                            <span>Tổng <strong class="stat-total">0</strong></span>
+                            <span class="c-wait">Chờ <strong class="stat-waiting">0</strong></span>
+                            <span class="c-done">Xong <strong class="stat-done">0</strong></span>
+                            <span class="c-fail">Lỗi <strong class="stat-error">0</strong></span>
+                        </div>
+                        <div class="vb-search"><input type="search" class="inp-search" placeholder="Tìm tác vụ…"></div>
+                        <div class="vb-filter">
+                            <select class="sel-filter-status">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="pending">Chờ</option>
+                                <option value="running">Đang chạy</option>
+                                <option value="done">Hoàn thành</option>
+                                <option value="error">Lỗi</option>
+                            </select>
+                        </div>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-add-row">+ Thêm dòng</button>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-delete-selected">Xóa đã chọn</button>
+                        <button type="button" class="vb-btn vb-btn-danger vb-btn-sm btn-clear-all">Xóa tất cả</button>
+                        <span class="page-info vb-task-count"></span>
+                    </div>
+
+                    <div class="vb-workspace-body">
+                    <div class="vb-grid-wrap grid-drop-zone">
+                        <table class="vb-grid">
+                            <thead>
+                                <tr>
+                                    <th class="col-cb"><input type="checkbox" class="check-all" title="Chọn tất cả"></th>
+                                    <th class="col-stt sortable" data-sort="order">STT</th>
+                                    <th class="col-grp sortable" data-sort="group">Nhóm</th>
+                                    <th class="col-file sortable" data-sort="name">Tên file</th>
+                                    <th class="col-text">Nội dung văn bản</th>
+                                    <th class="col-st sortable" data-sort="status">Trạng thái</th>
+                                    <th class="col-prog">Tiến độ</th>
+                                    <th class="col-out">Kết quả</th>
+                                    <th class="col-act">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="grid-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="vb-console log-panel">
+                        <div class="vb-console-header btn-toggle-log">
+                            <span>Console</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-clear-log" style="margin-left:auto">Xóa</button>
+                        </div>
+                        <div class="vb-console-body log-body"></div>
+                    </div>
+                    </div>
+
+                    <footer class="vb-footer">
+                        <div class="vb-footer-meta">
+                            <span class="output-dir-label tab-output-dir-label" title="Thư mục xuất">Tải xuống</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-tab-outputDir">Đổi thư mục</button>
+                        </div>
+                        <div class="vb-footer-actions">
+                            <button type="button" class="vb-btn vb-btn-primary vb-btn-lg btn-run">Bắt đầu batch</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-pause" disabled>Tạm dừng</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-resume" disabled>Tiếp tục</button>
+                            <button type="button" class="vb-btn vb-btn-danger btn-stop" style="display:none">Dừng</button>
+                            <button type="button" class="vb-btn vb-btn-ghost btn-run-errors">Chạy lại lỗi</button>
+                        </div>
+                    </footer>
+                </div>
+
+                <div class="vb-batch" id="qwen3-workspace" hidden>
+                    <header class="vb-sticky-header">
+                        <div class="vb-header-row">
+                            <div class="vb-engine-now">
+                                <div class="vb-engine-now-label">ENGINE ĐANG DÙNG</div>
+                                <h1 class="vb-page-title engine-now-name">Qwen3-TTS 0.6B</h1>
+                                <p class="vb-page-sub engine-now-sub">Clone và điều khiển giọng nâng cao</p>
+                                <div class="engine-now-badges vb-engine-badges"></div>
+                                <p class="engine-now-compat vb-engine-compat" hidden></p>
+                                <p class="vb-engine-license-line">Optional · Isolated PyTorch · Apache-2.0 (Qwen) · 0.6B only · không VoiceDesign · không bundle core</p>
+                                <p class="qwen3-vi-warn vb-hint" hidden style="color:var(--vb-warn,#b45309);margin-top:6px"></p>
+                            </div>
+                            <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-change-engine">Đổi engine</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-install-variant">Cài variant</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-download-template-inline" title="Tải file Excel mẫu">Tải mẫu Excel</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-export-jobs">Xuất JSON</button>
+                                <span class="vb-status-chip engine-status-badge">Đang khởi tạo</span>
+                            </div>
+                        </div>
+                        <div class="vb-config-panel">
+                            <div class="vb-field">
+                                <label>Variant</label>
+                                <select class="sel-variant"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Ngôn ngữ</label>
+                                <select class="sel-lang"></select>
+                            </div>
+                            <div class="vb-field qwen3-custom-only">
+                                <label>Speaker (Custom)</label>
+                                <select class="sel-voice"></select>
+                            </div>
+                            <div class="vb-field qwen3-custom-only" style="flex:1.2;min-width:200px">
+                                <label>Instruct (optional)</label>
+                                <input type="text" class="inp-instruct" placeholder="VD: Speak in a very happy tone">
+                            </div>
+                            <div class="vb-field qwen3-base-only" style="flex:1.2;min-width:220px" hidden>
+                                <label>Reference audio (clone)</label>
+                                <div style="display:flex;gap:6px;align-items:center">
+                                    <input type="text" class="inp-ref-wav" placeholder="File local WAV/MP3…" style="flex:1">
+                                    <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-ref-wav">Chọn</button>
+                                </div>
+                            </div>
+                            <div class="vb-field qwen3-base-only" style="flex:1;min-width:180px" hidden>
+                                <label>Ref transcript (optional)</label>
+                                <input type="text" class="inp-ref-text" placeholder="Transcript của ref audio…">
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="vb-table-toolbar">
+                        <div class="vb-stats-inline">
+                            <span>Tổng <strong class="stat-total">0</strong></span>
+                            <span class="c-wait">Chờ <strong class="stat-waiting">0</strong></span>
+                            <span class="c-done">Xong <strong class="stat-done">0</strong></span>
+                            <span class="c-fail">Lỗi <strong class="stat-error">0</strong></span>
+                        </div>
+                        <div class="vb-search"><input type="search" class="inp-search" placeholder="Tìm tác vụ…"></div>
+                        <div class="vb-filter">
+                            <select class="sel-filter-status">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="pending">Chờ</option>
+                                <option value="running">Đang chạy</option>
+                                <option value="done">Hoàn thành</option>
+                                <option value="error">Lỗi</option>
+                            </select>
+                        </div>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-add-row">+ Thêm dòng</button>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-delete-selected">Xóa đã chọn</button>
+                        <button type="button" class="vb-btn vb-btn-danger vb-btn-sm btn-clear-all">Xóa tất cả</button>
+                        <span class="page-info vb-task-count"></span>
+                    </div>
+
+                    <div class="vb-workspace-body">
+                    <div class="vb-grid-wrap grid-drop-zone">
+                        <table class="vb-grid">
+                            <thead>
+                                <tr>
+                                    <th class="col-cb"><input type="checkbox" class="check-all" title="Chọn tất cả"></th>
+                                    <th class="col-stt sortable" data-sort="order">STT</th>
+                                    <th class="col-grp sortable" data-sort="group">Nhóm</th>
+                                    <th class="col-file sortable" data-sort="name">Tên file</th>
+                                    <th class="col-text">Nội dung văn bản</th>
+                                    <th class="col-st sortable" data-sort="status">Trạng thái</th>
+                                    <th class="col-prog">Tiến độ</th>
+                                    <th class="col-out">Kết quả</th>
+                                    <th class="col-act">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="grid-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="vb-console log-panel">
+                        <div class="vb-console-header btn-toggle-log">
+                            <span>Console</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-clear-log" style="margin-left:auto">Xóa</button>
+                        </div>
+                        <div class="vb-console-body log-body"></div>
+                    </div>
+                    </div>
+
+                    <footer class="vb-footer">
+                        <div class="vb-footer-meta">
+                            <span class="output-dir-label tab-output-dir-label" title="Thư mục xuất">Tải xuống</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-tab-outputDir">Đổi thư mục</button>
+                        </div>
+                        <div class="vb-footer-actions">
+                            <button type="button" class="vb-btn vb-btn-primary vb-btn-lg btn-run">Bắt đầu batch</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-pause" disabled>Tạm dừng</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-resume" disabled>Tiếp tục</button>
+                            <button type="button" class="vb-btn vb-btn-danger btn-stop" style="display:none">Dừng</button>
+                            <button type="button" class="vb-btn vb-btn-ghost btn-run-errors">Chạy lại lỗi</button>
+                        </div>
+                    </footer>
+                </div>
+
+                <div class="vb-batch" id="spark-workspace" hidden>
+                    <header class="vb-sticky-header">
+                        <div class="vb-header-row">
+                            <div class="vb-engine-now">
+                                <div class="vb-engine-now-label">ENGINE ĐANG DÙNG</div>
+                                <h1 class="vb-page-title engine-now-name">Spark-TTS 0.5B</h1>
+                                <p class="vb-page-sub engine-now-sub">Clone giọng nâng cao · Speaker controls</p>
+                                <div class="engine-now-badges vb-engine-badges"></div>
+                                <p class="engine-now-compat vb-engine-compat" hidden></p>
+                                <p class="vb-engine-license-line">Optional · Isolated PyTorch · Apache-2.0 (SparkAudio) · Chinese + English · không Gradio · không Conda · không bundle core</p>
+                                <p class="spark-vi-warn vb-hint" hidden style="color:var(--vb-warn,#b45309);margin-top:6px"></p>
+                            </div>
+                            <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-change-engine">Đổi engine</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-install-variant">Cài Spark-TTS</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-download-template-inline" title="Tải file Excel mẫu">Tải mẫu Excel</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-export-jobs">Xuất JSON</button>
+                                <span class="vb-status-chip engine-status-badge">Đang khởi tạo</span>
+                            </div>
+                        </div>
+                        <div class="vb-config-panel">
+                            <div class="vb-field">
+                                <label>Mode</label>
+                                <select class="sel-voice-mode"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Ngôn ngữ</label>
+                                <select class="sel-lang"></select>
+                            </div>
+                            <div class="vb-field spark-clone-only" style="flex:1.2;min-width:220px">
+                                <label>Reference audio (clone)</label>
+                                <div style="display:flex;gap:6px;align-items:center">
+                                    <input type="text" class="inp-ref-wav" placeholder="File local WAV/MP3…" style="flex:1">
+                                    <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-ref-wav">Chọn</button>
+                                </div>
+                            </div>
+                            <div class="vb-field spark-clone-only" style="flex:1;min-width:180px">
+                                <label>Prompt transcript (optional)</label>
+                                <input type="text" class="inp-ref-text" placeholder="Transcript của ref audio…">
+                            </div>
+                            <div class="vb-field spark-create-only" hidden>
+                                <label>Gender</label>
+                                <select class="sel-gender"></select>
+                            </div>
+                            <div class="vb-field spark-create-only" hidden>
+                                <label>Pitch</label>
+                                <select class="sel-pitch"></select>
+                            </div>
+                            <div class="vb-field spark-create-only" hidden>
+                                <label>Speed</label>
+                                <select class="sel-speed-level"></select>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="vb-table-toolbar">
+                        <div class="vb-stats-inline">
+                            <span>Tổng <strong class="stat-total">0</strong></span>
+                            <span class="c-wait">Chờ <strong class="stat-waiting">0</strong></span>
+                            <span class="c-done">Xong <strong class="stat-done">0</strong></span>
+                            <span class="c-fail">Lỗi <strong class="stat-error">0</strong></span>
+                        </div>
+                        <div class="vb-search"><input type="search" class="inp-search" placeholder="Tìm tác vụ…"></div>
+                        <div class="vb-filter">
+                            <select class="sel-filter-status">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="pending">Chờ</option>
+                                <option value="running">Đang chạy</option>
+                                <option value="done">Hoàn thành</option>
+                                <option value="error">Lỗi</option>
+                            </select>
+                        </div>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-add-row">+ Thêm dòng</button>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-delete-selected">Xóa đã chọn</button>
+                        <button type="button" class="vb-btn vb-btn-danger vb-btn-sm btn-clear-all">Xóa tất cả</button>
+                        <span class="page-info vb-task-count"></span>
+                    </div>
+
+                    <div class="vb-workspace-body">
+                    <div class="vb-grid-wrap grid-drop-zone">
+                        <table class="vb-grid">
+                            <thead>
+                                <tr>
+                                    <th class="col-cb"><input type="checkbox" class="check-all" title="Chọn tất cả"></th>
+                                    <th class="col-stt sortable" data-sort="order">STT</th>
+                                    <th class="col-grp sortable" data-sort="group">Nhóm</th>
+                                    <th class="col-file sortable" data-sort="name">Tên file</th>
+                                    <th class="col-text">Nội dung văn bản</th>
+                                    <th class="col-st sortable" data-sort="status">Trạng thái</th>
+                                    <th class="col-prog">Tiến độ</th>
+                                    <th class="col-out">Kết quả</th>
+                                    <th class="col-act">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="grid-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="vb-console log-panel">
+                        <div class="vb-console-header btn-toggle-log">
+                            <span>Console</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-clear-log" style="margin-left:auto">Xóa</button>
+                        </div>
+                        <div class="vb-console-body log-body"></div>
+                    </div>
+                    </div>
+
+                    <footer class="vb-footer">
+                        <div class="vb-footer-meta">
+                            <span class="output-dir-label tab-output-dir-label" title="Thư mục xuất">Tải xuống</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-tab-outputDir">Đổi thư mục</button>
+                        </div>
+                        <div class="vb-footer-actions">
+                            <button type="button" class="vb-btn vb-btn-primary vb-btn-lg btn-run">Bắt đầu batch</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-pause" disabled>Tạm dừng</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-resume" disabled>Tiếp tục</button>
+                            <button type="button" class="vb-btn vb-btn-danger btn-stop" style="display:none">Dừng</button>
+                            <button type="button" class="vb-btn vb-btn-ghost btn-run-errors">Chạy lại lỗi</button>
+                        </div>
+                    </footer>
+                </div>
+
+                <div class="vb-batch" id="gpt-sovits-workspace" hidden>
+                    <header class="vb-sticky-header">
+                        <div class="vb-header-row">
+                            <div class="vb-engine-now">
+                                <div class="vb-engine-now-label">VOICE LAB</div>
+                                <h1 class="vb-page-title engine-now-name">GPT-SoVITS</h1>
+                                <p class="vb-page-sub engine-now-sub">Voice Lab · Clone giọng chuyên sâu</p>
+                                <div class="engine-now-badges vb-engine-badges"></div>
+                                <p class="engine-now-compat vb-engine-compat" hidden></p>
+                                <p class="vb-engine-license-line">Voice Lab · Inference only · Isolated PyTorch · không Gradio WebUI · không training · checkpoint do bạn chọn</p>
+                                <p class="gpt-sovits-vi-warn vb-hint" hidden style="color:var(--vb-warn,#b45309);margin-top:6px"></p>
+                            </div>
+                            <div class="vb-header-actions">
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-change-engine">Đổi engine</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-install-variant">Cài GPT-SoVITS</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-excel">Import Excel</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-folder">Import thư mục</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-import-txt">Import TXT</button>
+                                <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-download-template-inline" title="Tải file Excel mẫu">Tải mẫu Excel</button>
+                                <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-export-jobs">Xuất JSON</button>
+                                <span class="vb-status-chip engine-status-badge">Đang khởi tạo</span>
+                            </div>
+                        </div>
+                        <div class="vb-config-panel">
+                            <div class="vb-field">
+                                <label>Voice profile</label>
+                                <select class="sel-voice-profile"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Target language</label>
+                                <select class="sel-lang"></select>
+                            </div>
+                            <div class="vb-field">
+                                <label>Reference language</label>
+                                <select class="sel-ref-lang"></select>
+                            </div>
+                            <div class="vb-field" style="flex:1.2;min-width:220px">
+                                <label>Reference audio</label>
+                                <div style="display:flex;gap:6px;align-items:center">
+                                    <input type="text" class="inp-ref-wav" placeholder="File local WAV/MP3…" style="flex:1">
+                                    <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-ref-wav">Chọn</button>
+                                </div>
+                            </div>
+                            <div class="vb-field" style="flex:1;min-width:180px">
+                                <label>Reference text</label>
+                                <input type="text" class="inp-ref-text" placeholder="Transcript của ref audio…">
+                            </div>
+                            <div class="vb-field" style="flex:1.2;min-width:220px">
+                                <label>GPT checkpoint</label>
+                                <div style="display:flex;gap:6px;align-items:center">
+                                    <input type="text" class="inp-gpt-ckpt" placeholder="*.ckpt local…" style="flex:1">
+                                    <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-gpt-ckpt">Chọn</button>
+                                </div>
+                            </div>
+                            <div class="vb-field" style="flex:1.2;min-width:220px">
+                                <label>SoVITS checkpoint</label>
+                                <div style="display:flex;gap:6px;align-items:center">
+                                    <input type="text" class="inp-sovits-ckpt" placeholder="*.pth local…" style="flex:1">
+                                    <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-sovits-ckpt">Chọn</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="vb-config-panel gpt-sovits-profile-create" style="margin-top:8px;flex-wrap:wrap;gap:8px;align-items:flex-end">
+                            <div class="vb-field" style="min-width:160px">
+                                <label>Tên profile mới</label>
+                                <input type="text" class="inp-profile-name" placeholder="My voice…">
+                            </div>
+                            <label class="vb-field" style="flex:1.5;min-width:260px;display:flex;gap:8px;align-items:flex-start;margin:0">
+                                <input type="checkbox" class="chk-voice-ack" style="margin-top:4px">
+                                <span class="voice-ack-label">Tôi có quyền sử dụng giọng/reference audio này.</span>
+                            </label>
+                            <button type="button" class="vb-btn vb-btn-secondary vb-btn-sm btn-save-voice-profile">Lưu voice profile</button>
+                        </div>
+                    </header>
+
+                    <div class="vb-table-toolbar">
+                        <div class="vb-stats-inline">
+                            <span>Tổng <strong class="stat-total">0</strong></span>
+                            <span class="c-wait">Chờ <strong class="stat-waiting">0</strong></span>
+                            <span class="c-done">Xong <strong class="stat-done">0</strong></span>
+                            <span class="c-fail">Lỗi <strong class="stat-error">0</strong></span>
+                        </div>
+                        <div class="vb-search"><input type="search" class="inp-search" placeholder="Tìm tác vụ…"></div>
+                        <div class="vb-filter">
+                            <select class="sel-filter-status">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="pending">Chờ</option>
+                                <option value="running">Đang chạy</option>
+                                <option value="done">Hoàn thành</option>
+                                <option value="error">Lỗi</option>
+                            </select>
+                        </div>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-add-row">+ Thêm dòng</button>
+                        <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-delete-selected">Xóa đã chọn</button>
+                        <button type="button" class="vb-btn vb-btn-danger vb-btn-sm btn-clear-all">Xóa tất cả</button>
+                        <span class="page-info vb-task-count"></span>
+                    </div>
+
+                    <div class="vb-workspace-body">
+                    <div class="vb-grid-wrap grid-drop-zone">
+                        <table class="vb-grid">
+                            <thead>
+                                <tr>
+                                    <th class="col-cb"><input type="checkbox" class="check-all" title="Chọn tất cả"></th>
+                                    <th class="col-stt sortable" data-sort="order">STT</th>
+                                    <th class="col-grp sortable" data-sort="group">Nhóm</th>
+                                    <th class="col-file sortable" data-sort="name">Tên file</th>
+                                    <th class="col-text">Nội dung văn bản</th>
+                                    <th class="col-st sortable" data-sort="status">Trạng thái</th>
+                                    <th class="col-prog">Tiến độ</th>
+                                    <th class="col-out">Kết quả</th>
+                                    <th class="col-act">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="grid-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="vb-console log-panel">
+                        <div class="vb-console-header btn-toggle-log">
+                            <span>Console</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-clear-log" style="margin-left:auto">Xóa</button>
+                        </div>
+                        <div class="vb-console-body log-body"></div>
+                    </div>
+                    </div>
+
+                    <footer class="vb-footer">
+                        <div class="vb-footer-meta">
+                            <span class="output-dir-label tab-output-dir-label" title="Thư mục xuất">Tải xuống</span>
+                            <button type="button" class="vb-btn vb-btn-ghost vb-btn-sm btn-pick-tab-outputDir">Đổi thư mục</button>
+                        </div>
+                        <div class="vb-footer-actions">
+                            <button type="button" class="vb-btn vb-btn-primary vb-btn-lg btn-run">Bắt đầu batch</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-pause" disabled>Tạm dừng</button>
+                            <button type="button" class="vb-btn vb-btn-secondary btn-resume" disabled>Tiếp tục</button>
+                            <button type="button" class="vb-btn vb-btn-danger btn-stop" style="display:none">Dừng</button>
+                            <button type="button" class="vb-btn vb-btn-ghost btn-run-errors">Chạy lại lỗi</button>
+                        </div>
+                    </footer>
+                </div>
+            </section>
                 <div class="vb-hub">
                     <nav class="vb-hub-tabs" aria-label="Cài đặt">
                         <button type="button" class="vb-hub-tab active" data-hub="settings" data-sub="vieneu">VieNeu</button>
@@ -485,6 +1459,8 @@
                                 <label><input type="checkbox" id="set-useSeaG2p" checked> sea-g2p — đọc số, ngày tháng (VieNeu &amp; Edge)</label>
                                 <label><input type="checkbox" id="set-splitByLine" checked> Tách theo dòng khi synth VieNeu</label>
                                 <label><input type="checkbox" id="set-stripHash" checked> Bỏ ký tự # đầu dòng</label>
+                                <label><input type="checkbox" id="set-languageDetectionEnabled" checked> Tự phát hiện ngôn ngữ nội dung</label>
+                                <label><input type="checkbox" id="set-languageMismatchWarnings" checked> Cảnh báo khi model không hỗ trợ ngôn ngữ hiện tại</label>
                             </div>
                         </div>
                     </div>
